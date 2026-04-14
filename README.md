@@ -10,9 +10,8 @@
 | Name | GitHub |
 |------|--------|
 | Parth Gala | [@ParthGala2k](https://github.com/ParthGala2k) |
-| *(add teammates)* | *(add handles)* |
 
-**Team ID:** *(add your team ID)*
+**Team ID:** *Group 4*
 
 ---
 

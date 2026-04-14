@@ -1,0 +1,33 @@
+# Core agent framework
+langgraph>=0.2.0
+langchain>=0.2.0
+langchain-openai>=0.1.0
+langchain-community>=0.2.0
+
+# PDF parsing
+pymupdf>=1.24.0
+pdfplumber>=0.11.0
+
+# Infrastructure scanning
+checkov>=3.2.0
+
+# GitHub integration
+PyGithub>=2.3.0
+gitpython>=3.1.43
+
+# Backend API
+fastapi>=0.111.0
+uvicorn[standard]>=0.30.0
+python-multipart>=0.0.9
+
+# Vector store / embeddings
+faiss-cpu>=1.8.0
+openai>=1.35.0
+
+# Graph / visualization data
+networkx>=3.3
+
+# Utilities
+pydantic>=2.7.0
+python-dotenv>=1.0.1
+requests>=2.32.0

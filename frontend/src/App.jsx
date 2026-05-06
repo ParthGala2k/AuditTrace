@@ -8,13 +8,14 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  async function handleAudit({ pdfFile, repoUrl }) {
+  async function handleAudit({ pdfFile, repoUrl, model }) {
     setLoading(true);
     setError(null);
     try {
       const form = new FormData();
       form.append("pdf", pdfFile);
       form.append("repo_url", repoUrl);
+      if (model) form.append("model", model);
 
       const res = await fetch("http://localhost:8000/audit", {
         method: "POST",

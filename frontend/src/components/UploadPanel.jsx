@@ -1,13 +1,21 @@
 import { useState } from "react";
 
+const MODELS = [
+  { id: "openai/gpt-4o",                      label: "GPT-4o (OpenAI)"           },
+  { id: "openai/gpt-4o-mini",                  label: "GPT-4o mini (OpenAI)"      },
+  { id: "anthropic/claude-3.5-sonnet",         label: "Claude 3.5 Sonnet"         },
+  { id: "meta-llama/llama-3.1-70b-instruct",   label: "Llama 3.1 70B (Open-source)" },
+];
+
 export default function UploadPanel({ onSubmit, loading }) {
   const [pdfFile, setPdfFile] = useState(null);
   const [repoUrl, setRepoUrl] = useState("");
+  const [model, setModel] = useState(MODELS[0].id);
 
   function handleSubmit(e) {
     e.preventDefault();
     if (!pdfFile || !repoUrl) return;
-    onSubmit({ pdfFile, repoUrl });
+    onSubmit({ pdfFile, repoUrl, model });
   }
 
   return (
@@ -27,21 +35,42 @@ export default function UploadPanel({ onSubmit, loading }) {
                      file:rounded file:border-0 file:bg-indigo-600 file:text-white
                      hover:file:bg-indigo-700 cursor-pointer"
         />
+        {pdfFile && (
+          <p className="text-xs text-gray-500 mt-1">{pdfFile.name}</p>
+        )}
       </div>
 
-      <div className="mb-6">
+      <div className="mb-4">
         <label className="block text-sm font-medium text-gray-300 mb-1">
           GitHub Repository URL
         </label>
         <input
           type="url"
-          placeholder="https://github.com/owner/repo"
+          placeholder="https://github.com/bridgecrewio/terragoat"
           value={repoUrl}
           onChange={(e) => setRepoUrl(e.target.value)}
           className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2
                      text-gray-100 placeholder-gray-500 focus:outline-none
                      focus:border-indigo-500"
         />
+      </div>
+
+      <div className="mb-6">
+        <label className="block text-sm font-medium text-gray-300 mb-1">
+          LLM Model
+        </label>
+        <select
+          value={model}
+          onChange={(e) => setModel(e.target.value)}
+          className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2
+                     text-gray-100 focus:outline-none focus:border-indigo-500"
+        >
+          {MODELS.map((m) => (
+            <option key={m.id} value={m.id}>
+              {m.label}
+            </option>
+          ))}
+        </select>
       </div>
 
       <button

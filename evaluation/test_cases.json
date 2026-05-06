@@ -1,0 +1,552 @@
+[
+  {
+    "id": "tc-001",
+    "input": "1.4 Ensure that access keys are rotated every 90 days or less. Access keys consist of an access key ID and secret access key, which are used to sign programmatic requests that you make to AWS. AWS users need their own access keys to make programmatic calls to AWS. It is recommended that all access keys be regularly rotated.",
+    "expected": {
+      "clause_id": "CIS-1.4",
+      "requirement_type": "access_control",
+      "check_targets": ["aws_iam_access_key", "aws_iam_user"],
+      "severity": "medium"
+    }
+  },
+  {
+    "id": "tc-002",
+    "input": "1.5 Ensure IAM password policy requires at least one uppercase letter. Password policies, in part, enforce password complexity requirements. Use IAM password policies to ensure that passwords are at least a given length and include specific character types.",
+    "expected": {
+      "clause_id": "CIS-1.5",
+      "requirement_type": "access_control",
+      "check_targets": ["aws_iam_account_password_policy"],
+      "severity": "medium"
+    }
+  },
+  {
+    "id": "tc-003",
+    "input": "1.6 Ensure IAM password policy requires at least one lowercase letter. Use IAM password policies to ensure that passwords are at least a given length and include specific character types including lowercase letters.",
+    "expected": {
+      "clause_id": "CIS-1.6",
+      "requirement_type": "access_control",
+      "check_targets": ["aws_iam_account_password_policy"],
+      "severity": "medium"
+    }
+  },
+  {
+    "id": "tc-004",
+    "input": "1.7 Ensure IAM password policy requires at least one symbol. Use IAM password policies to ensure that passwords include specific character types including symbols such as !, @, #, $.",
+    "expected": {
+      "clause_id": "CIS-1.7",
+      "requirement_type": "access_control",
+      "check_targets": ["aws_iam_account_password_policy"],
+      "severity": "medium"
+    }
+  },
+  {
+    "id": "tc-005",
+    "input": "1.8 Ensure IAM password policy requires at least one number. Use IAM password policies to ensure that passwords include numeric characters.",
+    "expected": {
+      "clause_id": "CIS-1.8",
+      "requirement_type": "access_control",
+      "check_targets": ["aws_iam_account_password_policy"],
+      "severity": "medium"
+    }
+  },
+  {
+    "id": "tc-006",
+    "input": "1.9 Ensure IAM password policy requires minimum length of 14 or greater. Password policies enforce password complexity requirements. It is recommended that the password policy require a minimum password length of 14 characters.",
+    "expected": {
+      "clause_id": "CIS-1.9",
+      "requirement_type": "access_control",
+      "check_targets": ["aws_iam_account_password_policy"],
+      "severity": "medium"
+    }
+  },
+  {
+    "id": "tc-007",
+    "input": "1.10 Ensure IAM password policy prevents password reuse. IAM password policies can prevent the reuse of a given password by the same user. It is recommended that the password policy prevent the reuse of passwords.",
+    "expected": {
+      "clause_id": "CIS-1.10",
+      "requirement_type": "access_control",
+      "check_targets": ["aws_iam_account_password_policy"],
+      "severity": "low"
+    }
+  },
+  {
+    "id": "tc-008",
+    "input": "1.16 Ensure IAM policies that allow full '*:*' administrative privileges are not attached. IAM policies are the means by which privileges are granted to users, groups, or roles. It is recommended and considered a standard security advice to grant least privilege — that is, granting only the permissions required to perform a task.",
+    "expected": {
+      "clause_id": "CIS-1.16",
+      "requirement_type": "access_control",
+      "check_targets": ["aws_iam_policy", "aws_iam_role_policy", "aws_iam_user_policy"],
+      "severity": "critical"
+    }
+  },
+  {
+    "id": "tc-009",
+    "input": "2.1.1 Ensure S3 Bucket does not allow public access via ACLs. The S3 Block Public Access feature provides settings for access points, buckets, and accounts to help you manage public access to Amazon S3 resources. By default, new buckets, access points, and objects do not allow public access.",
+    "expected": {
+      "clause_id": "CIS-2.1.1",
+      "requirement_type": "access_control",
+      "check_targets": ["aws_s3_bucket", "aws_s3_bucket_public_access_block"],
+      "severity": "high"
+    }
+  },
+  {
+    "id": "tc-010",
+    "input": "2.1.2 Ensure S3 Bucket does not allow public access via bucket policy. This control checks that your Amazon S3 bucket is not publicly accessible by evaluating the bucket policy for public access.",
+    "expected": {
+      "clause_id": "CIS-2.1.2",
+      "requirement_type": "access_control",
+      "check_targets": ["aws_s3_bucket", "aws_s3_bucket_policy"],
+      "severity": "high"
+    }
+  },
+  {
+    "id": "tc-011",
+    "input": "2.1.5 Ensure that S3 Buckets are configured with 'Block public access (bucket settings)'. Amazon S3 provides Block Public Access settings to help manage public access to Amazon S3 resources. By default, new S3 buckets are private.",
+    "expected": {
+      "clause_id": "CIS-2.1.5",
+      "requirement_type": "access_control",
+      "check_targets": ["aws_s3_bucket_public_access_block", "aws_s3_bucket"],
+      "severity": "high"
+    }
+  },
+  {
+    "id": "tc-012",
+    "input": "2.2.1 Ensure EBS volume encryption is enabled in all regions. Elastic Compute Cloud (EC2) supports encryption at rest when using the Elastic Block Store (EBS) service. While disabled by default, forcing encryption at EBS volume creation is supported.",
+    "expected": {
+      "clause_id": "CIS-2.2.1",
+      "requirement_type": "encryption",
+      "check_targets": ["aws_ebs_volume", "aws_instance"],
+      "severity": "high"
+    }
+  },
+  {
+    "id": "tc-013",
+    "input": "2.3.1 Ensure that encryption is enabled for RDS Instances. Amazon RDS encrypted DB instances use the industry standard AES-256 encryption algorithm to encrypt your data on the server that hosts your Amazon RDS DB instances.",
+    "expected": {
+      "clause_id": "CIS-2.3.1",
+      "requirement_type": "encryption",
+      "check_targets": ["aws_db_instance", "aws_rds_cluster"],
+      "severity": "high"
+    }
+  },
+  {
+    "id": "tc-014",
+    "input": "2.3.2 Ensure Auto Minor Version Upgrade feature is Enabled for RDS Instances. Ensure that RDS database instances have the Auto Minor Version Upgrade flag enabled in order to receive automatically minor engine upgrades during the specified maintenance window.",
+    "expected": {
+      "clause_id": "CIS-2.3.2",
+      "requirement_type": "patching",
+      "check_targets": ["aws_db_instance"],
+      "severity": "medium"
+    }
+  },
+  {
+    "id": "tc-015",
+    "input": "2.3.3 Ensure that public access is not given to RDS Instance. Ensure and verify that RDS database instances provisioned in your AWS account do restrict unauthorized access in order to minimize security risks.",
+    "expected": {
+      "clause_id": "CIS-2.3.3",
+      "requirement_type": "networking",
+      "check_targets": ["aws_db_instance", "aws_rds_cluster"],
+      "severity": "high"
+    }
+  },
+  {
+    "id": "tc-016",
+    "input": "3.1 Ensure CloudTrail is enabled in all regions. AWS CloudTrail is a web service that records AWS API calls for your account and delivers log files to you. The recorded information includes the identity of the API caller, the time of the API call, the source IP address of the API caller, the request parameters, and the response elements returned by the AWS service.",
+    "expected": {
+      "clause_id": "CIS-3.1",
+      "requirement_type": "logging",
+      "check_targets": ["aws_cloudtrail"],
+      "severity": "high"
+    }
+  },
+  {
+    "id": "tc-017",
+    "input": "3.2 Ensure CloudTrail log file validation is enabled. CloudTrail log file validation creates a digitally signed digest file containing a hash of each log that CloudTrail writes to S3. You can use these digest files to determine whether a log file was modified, deleted, or unchanged after CloudTrail delivered the log.",
+    "expected": {
+      "clause_id": "CIS-3.2",
+      "requirement_type": "logging",
+      "check_targets": ["aws_cloudtrail"],
+      "severity": "low"
+    }
+  },
+  {
+    "id": "tc-018",
+    "input": "3.3 Ensure the S3 bucket used to store CloudTrail logs is not publicly accessible. CloudTrail logs a record of every API call made in your AWS account. These log files are stored in an S3 bucket. It is recommended that the bucket policy, or access control list (ACL), applied to the S3 bucket that CloudTrail logs to prevent public access.",
+    "expected": {
+      "clause_id": "CIS-3.3",
+      "requirement_type": "access_control",
+      "check_targets": ["aws_s3_bucket", "aws_cloudtrail"],
+      "severity": "high"
+    }
+  },
+  {
+    "id": "tc-019",
+    "input": "3.4 Ensure CloudTrail trails are integrated with CloudWatch Logs. AWS CloudTrail is a web service that records AWS API calls made in a given AWS account. The recorded information includes the identity of the API caller, the time of the API call, the source IP address of the API caller, the request parameters, and the response elements returned by the AWS service.",
+    "expected": {
+      "clause_id": "CIS-3.4",
+      "requirement_type": "monitoring",
+      "check_targets": ["aws_cloudtrail", "aws_cloudwatch_log_group"],
+      "severity": "medium"
+    }
+  },
+  {
+    "id": "tc-020",
+    "input": "3.5 Ensure AWS Config is enabled in all regions. AWS Config is a web service that performs configuration management of supported AWS resources within your account and delivers log files to you. The recorded information includes the configuration item (AWS resource), relationships between configuration items (AWS resources), any configuration changes between resources.",
+    "expected": {
+      "clause_id": "CIS-3.5",
+      "requirement_type": "monitoring",
+      "check_targets": ["aws_config_configuration_recorder", "aws_config_delivery_channel"],
+      "severity": "medium"
+    }
+  },
+  {
+    "id": "tc-021",
+    "input": "3.6 Ensure S3 bucket access logging is enabled on the CloudTrail S3 bucket. S3 Bucket Access Logging generates a log that contains access records for each request made to your S3 bucket. An access log record contains details about the request, such as the request type, the resources specified in the request worked, and the time and date the request was processed.",
+    "expected": {
+      "clause_id": "CIS-3.6",
+      "requirement_type": "logging",
+      "check_targets": ["aws_s3_bucket"],
+      "severity": "low"
+    }
+  },
+  {
+    "id": "tc-022",
+    "input": "3.7 Ensure CloudTrail logs are encrypted at rest using KMS CMKs. AWS CloudTrail is a web service that records AWS API calls for an account and makes those logs available to users and resources in accordance with IAM policies. AWS Key Management Service (KMS) is a managed service that helps create and control the encryption keys used to encrypt account data.",
+    "expected": {
+      "clause_id": "CIS-3.7",
+      "requirement_type": "encryption",
+      "check_targets": ["aws_cloudtrail", "aws_kms_key"],
+      "severity": "medium"
+    }
+  },
+  {
+    "id": "tc-023",
+    "input": "4.1 Ensure no security groups allow ingress from 0.0.0.0/0 to port 22. Security groups provide stateful filtering of ingress and egress network traffic to AWS resources. It is recommended that no security group allows unrestricted ingress access to port 22.",
+    "expected": {
+      "clause_id": "CIS-4.1",
+      "requirement_type": "networking",
+      "check_targets": ["aws_security_group", "aws_security_group_rule"],
+      "severity": "critical"
+    }
+  },
+  {
+    "id": "tc-024",
+    "input": "4.2 Ensure no security groups allow ingress from 0.0.0.0/0 to port 3389. Security groups provide stateful filtering of ingress/egress network traffic to AWS resources. It is recommended that no security group allow unrestricted ingress access to port 3389 (Remote Desktop Protocol).",
+    "expected": {
+      "clause_id": "CIS-4.2",
+      "requirement_type": "networking",
+      "check_targets": ["aws_security_group", "aws_security_group_rule"],
+      "severity": "critical"
+    }
+  },
+  {
+    "id": "tc-025",
+    "input": "4.3 Ensure the default security group of every VPC restricts all traffic. A VPC comes with a default security group whose initial settings deny all inbound traffic, allow all outbound traffic, and allow all traffic between instances assigned to the security group.",
+    "expected": {
+      "clause_id": "CIS-4.3",
+      "requirement_type": "networking",
+      "check_targets": ["aws_default_security_group", "aws_vpc"],
+      "severity": "medium"
+    }
+  },
+  {
+    "id": "tc-026",
+    "input": "4.4 Ensure routing tables for VPC peering are least access. Once a VPC peering connection is established, routing tables must be updated to establish any connections between the peered VPCs. These routes can be as specific as desired — even peering a VPC to only a single host on the other side of the connection.",
+    "expected": {
+      "clause_id": "CIS-4.4",
+      "requirement_type": "networking",
+      "check_targets": ["aws_route_table", "aws_vpc_peering_connection"],
+      "severity": "medium"
+    }
+  },
+  {
+    "id": "tc-027",
+    "input": "5.1 Ensure no Network ACLs allow ingress from 0.0.0.0/0 to remote server administration ports. The Network Access Control List (NACL) function provides stateless filtering of ingress and egress network traffic to AWS resources. It is recommended that no NACL allows unrestricted ingress access to remote server administration ports, such as SSH to port 22 and RDP to port 3389.",
+    "expected": {
+      "clause_id": "CIS-5.1",
+      "requirement_type": "networking",
+      "check_targets": ["aws_network_acl", "aws_network_acl_rule"],
+      "severity": "high"
+    }
+  },
+  {
+    "id": "tc-028",
+    "input": "All data at rest must be encrypted using AES-256 or stronger encryption. This applies to all storage services including S3 buckets, EBS volumes, RDS databases, and DynamoDB tables.",
+    "expected": {
+      "clause_id": "ENC-001",
+      "requirement_type": "encryption",
+      "check_targets": ["aws_s3_bucket", "aws_ebs_volume", "aws_db_instance", "aws_dynamodb_table"],
+      "severity": "high"
+    }
+  },
+  {
+    "id": "tc-029",
+    "input": "All data in transit must be protected using TLS 1.2 or higher. Load balancers and API endpoints must enforce HTTPS and reject insecure connections.",
+    "expected": {
+      "clause_id": "ENC-002",
+      "requirement_type": "encryption",
+      "check_targets": ["aws_alb_listener", "aws_lb_listener", "aws_elb"],
+      "severity": "high"
+    }
+  },
+  {
+    "id": "tc-030",
+    "input": "Lambda functions must not have environment variables containing unencrypted secrets or API keys. All secrets must be retrieved from AWS Secrets Manager or Parameter Store at runtime.",
+    "expected": {
+      "clause_id": "SEC-001",
+      "requirement_type": "secrets_management",
+      "check_targets": ["aws_lambda_function"],
+      "severity": "high"
+    }
+  },
+  {
+    "id": "tc-031",
+    "input": "EC2 instances must not use the default VPC. All production workloads must be deployed in custom VPCs with appropriate network segmentation.",
+    "expected": {
+      "clause_id": "NET-001",
+      "requirement_type": "networking",
+      "check_targets": ["aws_instance", "aws_vpc"],
+      "severity": "medium"
+    }
+  },
+  {
+    "id": "tc-032",
+    "input": "Ensure that IAM roles used by EC2 instances follow the principle of least privilege. No instance profile should grant administrative access.",
+    "expected": {
+      "clause_id": "CIS-1.16b",
+      "requirement_type": "access_control",
+      "check_targets": ["aws_iam_role", "aws_iam_instance_profile"],
+      "severity": "high"
+    }
+  },
+  {
+    "id": "tc-033",
+    "input": "All S3 buckets storing sensitive data must have versioning enabled to protect against accidental deletion and allow recovery of previous versions.",
+    "expected": {
+      "clause_id": "DAT-001",
+      "requirement_type": "backup",
+      "check_targets": ["aws_s3_bucket", "aws_s3_bucket_versioning"],
+      "severity": "medium"
+    }
+  },
+  {
+    "id": "tc-034",
+    "input": "Ensure RDS automated backups are enabled with a retention period of at least 7 days. Database backups must be retained to support disaster recovery requirements.",
+    "expected": {
+      "clause_id": "DAT-002",
+      "requirement_type": "backup",
+      "check_targets": ["aws_db_instance", "aws_rds_cluster"],
+      "severity": "high"
+    }
+  },
+  {
+    "id": "tc-035",
+    "input": "EKS clusters must have logging enabled for at least api, audit, authenticator, controllerManager, and scheduler components.",
+    "expected": {
+      "clause_id": "LOG-001",
+      "requirement_type": "logging",
+      "check_targets": ["aws_eks_cluster"],
+      "severity": "medium"
+    }
+  },
+  {
+    "id": "tc-036",
+    "input": "All ECR repositories must have image scanning enabled and must scan images on push to detect vulnerabilities.",
+    "expected": {
+      "clause_id": "SEC-002",
+      "requirement_type": "patching",
+      "check_targets": ["aws_ecr_repository"],
+      "severity": "medium"
+    }
+  },
+  {
+    "id": "tc-037",
+    "input": "SNS topics that contain sensitive data must be encrypted using AWS KMS. Unencrypted SNS topics are not permitted for topics that process PII or financial data.",
+    "expected": {
+      "clause_id": "ENC-003",
+      "requirement_type": "encryption",
+      "check_targets": ["aws_sns_topic"],
+      "severity": "medium"
+    }
+  },
+  {
+    "id": "tc-038",
+    "input": "SQS queues must be encrypted at rest using a KMS customer-managed key (CMK). Default SQS encryption using SSE-SQS is not sufficient for queues processing sensitive data.",
+    "expected": {
+      "clause_id": "ENC-004",
+      "requirement_type": "encryption",
+      "check_targets": ["aws_sqs_queue"],
+      "severity": "medium"
+    }
+  },
+  {
+    "id": "tc-039",
+    "input": "VPC Flow Logs must be enabled for all VPCs to capture information about IP traffic going to and from network interfaces in your VPC.",
+    "expected": {
+      "clause_id": "LOG-002",
+      "requirement_type": "logging",
+      "check_targets": ["aws_vpc", "aws_flow_log"],
+      "severity": "medium"
+    }
+  },
+  {
+    "id": "tc-040",
+    "input": "CloudWatch alarms must be configured to alert on unauthorized API calls, including root account usage, and failed console login attempts.",
+    "expected": {
+      "clause_id": "MON-001",
+      "requirement_type": "monitoring",
+      "check_targets": ["aws_cloudwatch_metric_alarm", "aws_cloudwatch_log_metric_filter"],
+      "severity": "medium"
+    }
+  },
+  {
+    "id": "tc-041",
+    "input": "Ensure GuardDuty is enabled in all AWS regions. Amazon GuardDuty is a threat detection service that continuously monitors for malicious activity and unauthorized behavior.",
+    "expected": {
+      "clause_id": "MON-002",
+      "requirement_type": "monitoring",
+      "check_targets": ["aws_guardduty_detector"],
+      "severity": "high"
+    }
+  },
+  {
+    "id": "tc-042",
+    "input": "AWS Secrets Manager must be used for storing database credentials, API keys, and other secrets. Hard-coded credentials in Terraform or application code are prohibited.",
+    "expected": {
+      "clause_id": "SEC-003",
+      "requirement_type": "secrets_management",
+      "check_targets": ["aws_secretsmanager_secret", "aws_db_instance"],
+      "severity": "critical"
+    }
+  },
+  {
+    "id": "tc-043",
+    "input": "Ensure that AWS KMS customer master keys (CMKs) are rotated automatically. Key rotation limits the amount of data encrypted with any one key version.",
+    "expected": {
+      "clause_id": "ENC-005",
+      "requirement_type": "encryption",
+      "check_targets": ["aws_kms_key"],
+      "severity": "medium"
+    }
+  },
+  {
+    "id": "tc-044",
+    "input": "All application load balancers must redirect HTTP traffic to HTTPS. Port 80 listeners must only contain redirect rules pointing to port 443.",
+    "expected": {
+      "clause_id": "ENC-006",
+      "requirement_type": "encryption",
+      "check_targets": ["aws_alb_listener", "aws_lb_listener"],
+      "severity": "high"
+    }
+  },
+  {
+    "id": "tc-045",
+    "input": "CloudWatch log groups must have a retention policy configured. Log groups without a retention policy retain logs indefinitely, which may violate data minimization requirements.",
+    "expected": {
+      "clause_id": "LOG-003",
+      "requirement_type": "logging",
+      "check_targets": ["aws_cloudwatch_log_group"],
+      "severity": "low"
+    }
+  },
+  {
+    "id": "tc-046",
+    "input": "EC2 instances must use IMDSv2 (Instance Metadata Service version 2) exclusively. IMDSv1 is deprecated and vulnerable to SSRF attacks that can expose instance credentials.",
+    "expected": {
+      "clause_id": "SEC-004",
+      "requirement_type": "access_control",
+      "check_targets": ["aws_instance", "aws_launch_template"],
+      "severity": "high"
+    }
+  },
+  {
+    "id": "tc-047",
+    "input": "DynamoDB tables must have encryption at rest enabled using AWS-managed or customer-managed KMS keys.",
+    "expected": {
+      "clause_id": "ENC-007",
+      "requirement_type": "encryption",
+      "check_targets": ["aws_dynamodb_table"],
+      "severity": "medium"
+    }
+  },
+  {
+    "id": "tc-048",
+    "input": "Ensure that ElasticSearch/OpenSearch domains are encrypted at rest and have node-to-node encryption enabled.",
+    "expected": {
+      "clause_id": "ENC-008",
+      "requirement_type": "encryption",
+      "check_targets": ["aws_elasticsearch_domain", "aws_opensearch_domain"],
+      "severity": "high"
+    }
+  },
+  {
+    "id": "tc-049",
+    "input": "S3 server-side encryption must be enabled for all buckets. Buckets must use either SSE-S3 or SSE-KMS encryption. Unencrypted S3 buckets are not permitted.",
+    "expected": {
+      "clause_id": "ENC-009",
+      "requirement_type": "encryption",
+      "check_targets": ["aws_s3_bucket", "aws_s3_bucket_server_side_encryption_configuration"],
+      "severity": "high"
+    }
+  },
+  {
+    "id": "tc-050",
+    "input": "IAM users must not have direct policy attachments. All permissions must be granted via IAM groups or roles. Direct user policy attachments make permission management difficult to audit.",
+    "expected": {
+      "clause_id": "CIS-1.15",
+      "requirement_type": "access_control",
+      "check_targets": ["aws_iam_user_policy", "aws_iam_user"],
+      "severity": "medium"
+    }
+  },
+  {
+    "id": "tc-051",
+    "input": "Multi-Factor Authentication (MFA) must be enabled on the AWS root account. The root account has unrestricted access to all AWS services and resources; its use should be avoided and protected with MFA.",
+    "expected": {
+      "clause_id": "CIS-1.1",
+      "requirement_type": "access_control",
+      "check_targets": ["aws_iam_user"],
+      "severity": "critical"
+    }
+  },
+  {
+    "id": "tc-052",
+    "input": "Ensure that Amazon Glacier vaults have access policies that prevent public access. Data stored in Glacier should be accessible only by authorized principals.",
+    "expected": {
+      "clause_id": "DAT-003",
+      "requirement_type": "access_control",
+      "check_targets": ["aws_glacier_vault"],
+      "severity": "high"
+    }
+  },
+  {
+    "id": "tc-053",
+    "input": "Lambda functions must not be granted permissions that allow invocation from any principal ('*'). Function resource policies must restrict callers to specific services or accounts.",
+    "expected": {
+      "clause_id": "SEC-005",
+      "requirement_type": "access_control",
+      "check_targets": ["aws_lambda_permission", "aws_lambda_function"],
+      "severity": "high"
+    }
+  },
+  {
+    "id": "tc-054",
+    "input": "Ensure Elastic Load Balancers have access logs enabled. Access logs capture detailed information about requests sent to your load balancer for security analysis and troubleshooting.",
+    "expected": {
+      "clause_id": "LOG-004",
+      "requirement_type": "logging",
+      "check_targets": ["aws_alb", "aws_lb", "aws_elb"],
+      "severity": "medium"
+    }
+  },
+  {
+    "id": "tc-055",
+    "input": "Ensure that ECS task definitions do not have elevated privileges. Containers must not run with privileged mode enabled or with the root user unless strictly necessary.",
+    "expected": {
+      "clause_id": "SEC-006",
+      "requirement_type": "access_control",
+      "check_targets": ["aws_ecs_task_definition"],
+      "severity": "high"
+    }
+  }
+]

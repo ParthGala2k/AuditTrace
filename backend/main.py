@@ -1,15 +1,20 @@
 """
-AuditTrace — LangGraph Orchestration
---------------------------------------
-Wires the Planner → Executor → Critic pipeline using LangGraph's
-StateGraph so each agent runs as a discrete node with shared state.
+AuditTrace — LangGraph Orchestration + FastAPI
+------------------------------------------------
+Pipeline: Planner → Executor → Critic
+The active LLM model is threaded through all nodes via AuditState,
+so the frontend can switch models per request.
 """
 
 import os
-from typing import TypedDict, List, Dict, Any
+import shutil
+import tempfile
+from typing import TypedDict, List, Dict, Any, Optional
 
 from langgraph.graph import StateGraph, END
 from dotenv import load_dotenv
+from fastapi import FastAPI, UploadFile, File, Form
+from fastapi.middleware.cors import CORSMiddleware
 
 from agents import PlannerAgent, ExecutorAgent, CriticAgent, ComplianceRequirement
 from agents.executor import Finding
@@ -25,6 +30,7 @@ load_dotenv()
 class AuditState(TypedDict):
     pdf_path: str
     repo_url: str
+    model: Optional[str]          # OpenRouter model ID, None = use env default
     policy_chunks: List[str]
     requirements: List[ComplianceRequirement]
     repo_local_path: str
@@ -33,14 +39,14 @@ class AuditState(TypedDict):
 
 
 # ---------------------------------------------------------------------------
-# Node functions (one per agent)
+# Node functions
 # ---------------------------------------------------------------------------
 
 def plan_node(state: AuditState) -> AuditState:
-    """Planner: parse PDF → extract requirements."""
+    """Planner: parse PDF → extract structured requirements."""
     text = extract_text(state["pdf_path"])
     chunks = chunk_by_section(text)
-    planner = PlannerAgent()
+    planner = PlannerAgent(model=state.get("model"))
     requirements: List[ComplianceRequirement] = []
     for chunk in chunks:
         requirements.extend(planner.decompose(chunk))
@@ -49,7 +55,7 @@ def plan_node(state: AuditState) -> AuditState:
 
 def execute_node(state: AuditState) -> AuditState:
     """Executor: clone repo → run Checkov → map findings to requirements."""
-    token = os.environ["GITHUB_TOKEN"]
+    token = os.environ.get("GITHUB_TOKEN", "")
     local_path = clone_repo(state["repo_url"], token)
     executor = ExecutorAgent(local_path)
     findings_map = executor.execute(state["requirements"])
@@ -57,9 +63,13 @@ def execute_node(state: AuditState) -> AuditState:
 
 
 def critic_node(state: AuditState) -> AuditState:
-    """Critic: build compliance trace graph + suggest fixes."""
-    critic = CriticAgent()
-    report = critic.generate_report(state["requirements"], state["findings_map"])
+    """Critic: build compliance trace graph + generate fix suggestions."""
+    critic = CriticAgent(model=state.get("model"))
+    report = critic.generate_report(
+        state["requirements"],
+        state["findings_map"],
+        repo_local_path=state.get("repo_local_path", ""),
+    )
     return {**state, "report": report}
 
 
@@ -72,24 +82,18 @@ def build_graph() -> StateGraph:
     graph.add_node("planner", plan_node)
     graph.add_node("executor", execute_node)
     graph.add_node("critic", critic_node)
-
     graph.set_entry_point("planner")
     graph.add_edge("planner", "executor")
     graph.add_edge("executor", "critic")
     graph.add_edge("critic", END)
-
     return graph.compile()
 
 
 # ---------------------------------------------------------------------------
-# FastAPI wrapper
+# FastAPI app
 # ---------------------------------------------------------------------------
 
-from fastapi import FastAPI, UploadFile, File, Form
-from fastapi.middleware.cors import CORSMiddleware
-import shutil, tempfile
-
-app = FastAPI(title="AuditTrace API")
+app = FastAPI(title="AuditTrace API", version="0.1.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -105,10 +109,14 @@ audit_graph = build_graph()
 async def run_audit(
     pdf: UploadFile = File(...),
     repo_url: str = Form(...),
+    model: str = Form(default=None),
 ):
     """
-    Upload a compliance PDF and provide a GitHub repo URL.
-    Returns the full compliance trace report.
+    Run a full compliance audit.
+
+    - **pdf**: Compliance policy PDF (SOC2, NIST, CIS Benchmark, etc.)
+    - **repo_url**: GitHub repo URL containing infrastructure-as-code
+    - **model**: OpenRouter model ID (optional, defaults to LLM_MODEL env var)
     """
     with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
         shutil.copyfileobj(pdf.file, tmp)
@@ -117,6 +125,7 @@ async def run_audit(
     initial_state: AuditState = {
         "pdf_path": pdf_path,
         "repo_url": repo_url,
+        "model": model or None,
         "policy_chunks": [],
         "requirements": [],
         "repo_local_path": "",

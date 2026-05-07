@@ -6,7 +6,7 @@ a structured list of technical requirements that can be evaluated
 against live infrastructure.
 """
 
-from langchain.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate
 from pydantic import BaseModel
 from typing import List
 

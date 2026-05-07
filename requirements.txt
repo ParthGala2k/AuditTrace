@@ -24,8 +24,8 @@ python-multipart>=0.0.9
 faiss-cpu>=1.8.0
 openai>=1.35.0
 
-# Graph / visualization data
-networkx>=3.3
+# Graph / visualization data (pinned to satisfy checkov<3.2 constraint)
+networkx==2.6.3
 
 # Utilities
 pydantic>=2.7.0

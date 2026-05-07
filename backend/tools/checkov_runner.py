@@ -9,8 +9,21 @@ import subprocess
 import tempfile
 import json
 import os
+import sys
+import shutil
 from typing import List, Dict, Any
-from github import Github
+
+# Resolve checkov to the venv's Scripts/ directory so subprocess finds it
+def _checkov_exe() -> str:
+    found = shutil.which("checkov")
+    if found:
+        return found
+    # Derive from current Python executable (works inside venv on Windows)
+    scripts_dir = os.path.dirname(sys.executable)
+    candidate = os.path.join(scripts_dir, "checkov.exe")
+    if os.path.exists(candidate):
+        return candidate
+    return "checkov"  # last resort
 
 
 def clone_repo(repo_url: str, github_token: str) -> str:
@@ -25,8 +38,11 @@ def clone_repo(repo_url: str, github_token: str) -> str:
         Path to the cloned directory.
     """
     tmp_dir = tempfile.mkdtemp(prefix="audittrace_")
-    # Inject token for private repo access
-    auth_url = repo_url.replace("https://", f"https://{github_token}@")
+    auth_url = (
+        repo_url.replace("https://", f"https://{github_token}@")
+        if github_token
+        else repo_url
+    )
     subprocess.run(
         ["git", "clone", "--depth", "1", auth_url, tmp_dir],
         check=True,
@@ -47,7 +63,7 @@ def run_checkov(directory: str, framework: str = "all") -> List[Dict[str, Any]]:
         List of failed check dicts.
     """
     cmd = [
-        "checkov",
+        _checkov_exe(),
         "--directory", directory,
         "--output", "json",
         "--quiet",

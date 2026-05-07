@@ -14,3 +14,6 @@ frontend/.next/
 Thumbs.db
 uploads/
 reports/
+*.pdf
+*.db
+backend/venv/

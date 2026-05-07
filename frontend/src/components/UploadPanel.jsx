@@ -1,10 +1,10 @@
 import { useState } from "react";
 
 const MODELS = [
-  { id: "openai/gpt-4o",                      label: "GPT-4o (OpenAI)"           },
-  { id: "openai/gpt-4o-mini",                  label: "GPT-4o mini (OpenAI)"      },
-  { id: "anthropic/claude-3.5-sonnet",         label: "Claude 3.5 Sonnet"         },
-  { id: "meta-llama/llama-3.1-70b-instruct",   label: "Llama 3.1 70B (Open-source)" },
+  { id: "openai/gpt-4o",                    label: "GPT-4o (OpenAI)"              },
+  { id: "openai/gpt-4o-mini",               label: "GPT-4o mini (OpenAI)"         },
+  { id: "deepseek/deepseek-chat",           label: "DeepSeek V3 (Open-source)"    },
+  { id: "meta-llama/llama-3.1-70b-instruct", label: "Llama 3.1 70B (Open-source)" },
 ];
 
 export default function UploadPanel({ onSubmit, loading }) {

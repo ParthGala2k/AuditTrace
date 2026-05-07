@@ -1,0 +1,1240 @@
+{
+  "name": "cis_aws_v7",
+  "source_pdf": "CIS_Amazon_Web_Services_Foundations_Benchmark_v7.0.0.pdf",
+  "model_used": "openai/gpt-4o-mini",
+  "requirement_count": 89,
+  "failed_extractions": 0,
+  "requirements": [
+    {
+      "clause_id": "CIS-2.21",
+      "clause_text": "Ensure AWS resource policies do not allow unrestricted access using \"Principal\": \"*\"",
+      "rationale": "Unrestricted access can lead to unauthorized access to sensitive resources, increasing the risk of data breaches and compliance violations. Properly restricting access helps to safeguard resources and maintain security posture.",
+      "remediation_hint": "Review and update the resource policy to specify allowed principals instead of using '*'",
+      "requirement_type": "access_control",
+      "check_targets": [
+        "aws_s3_bucket_policy",
+        "aws_iam_policy"
+      ],
+      "level": 1,
+      "severity": "medium",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-3.2.4",
+      "clause_text": "Ensure Multi-AZ deployments are used for enhanced availability in Amazon RDS",
+      "rationale": "Multi-AZ deployments provide high availability and failover support for Amazon RDS instances, ensuring that database operations can continue even in the event of an outage. This enhances the resilience of applications relying on the database.",
+      "remediation_hint": "Use the 'aws_db_instance' resource with the 'multi_az' attribute set to true.",
+      "requirement_type": "backup",
+      "check_targets": [
+        "aws_db_instance"
+      ],
+      "level": 1,
+      "severity": "medium",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-4.10",
+      "clause_text": "Ensure all AWS-managed web front-end services have access logging enabled",
+      "rationale": "Enabling access logging for web front-end services helps in monitoring and auditing access to the services. It provides valuable insights into usage patterns and potential security incidents.",
+      "remediation_hint": "Set the 'access_logs' attribute to enable logging on the relevant AWS resources.",
+      "requirement_type": "logging",
+      "check_targets": [
+        "aws_cloudfront_distribution",
+        "aws_elastic_load_balancing",
+        "aws_api_gateway"
+      ],
+      "level": 1,
+      "severity": "medium",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-5.16",
+      "clause_text": "Ensure AWS Security Hub is enabled",
+      "rationale": "Enabling AWS Security Hub helps in centralizing security alerts and compliance status across AWS accounts, allowing for better visibility and quicker response to potential security issues.",
+      "remediation_hint": "Use the aws_securityhub_account resource to enable Security Hub.",
+      "requirement_type": "monitoring",
+      "check_targets": [
+        "aws_securityhub_account"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-6.8",
+      "clause_text": "Ensure VPC Endpoints are used for access to AWS Services (Manual)",
+      "rationale": "Using VPC Endpoints enhances security by ensuring that traffic to AWS services does not traverse the public internet, reducing exposure to potential threats.",
+      "remediation_hint": "Use the 'aws_vpc_endpoint' resource to create VPC Endpoints for necessary AWS services.",
+      "requirement_type": "networking",
+      "check_targets": [
+        "aws_vpc_endpoint"
+      ],
+      "level": 1,
+      "severity": "medium",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-2.1.1",
+      "clause_text": "Ensure centralized root access in AWS Organizations",
+      "rationale": "Centralized root access management reduces the risk of credential sprawl and improves security by allowing centralized control over root user credentials across multiple accounts.",
+      "remediation_hint": "Enable trusted access for AWS IAM in AWS Organizations.",
+      "requirement_type": "access_control",
+      "check_targets": [
+        "aws_organizations",
+        "aws_iam_role"
+      ],
+      "level": 2,
+      "severity": "medium",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-2.1.2",
+      "clause_text": "Ensure authorization guardrails for all AWS Organization accounts",
+      "rationale": "Authorization policies set organization-wide limits on actions principals can perform, preventing excessive or inconsistent permissions that could weaken security.",
+      "remediation_hint": "Use aws_organizations_policy to attach Service Control Policies to accounts.",
+      "requirement_type": "access_control",
+      "check_targets": [
+        "aws_organizations_policy"
+      ],
+      "level": 2,
+      "severity": "high",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-2.1.3",
+      "clause_text": "Ensure Organizations management account is not used for workloads",
+      "rationale": "The management account has unique privileges that cannot be restricted, increasing the risk of a compromise. Deploying workloads in this account raises the attack surface and potential impact of vulnerabilities.",
+      "remediation_hint": "Use dedicated member accounts for workloads instead of the management account.",
+      "requirement_type": "access_control",
+      "check_targets": [
+        "aws_organizations_account",
+        "aws_iam_role",
+        "aws_iam_policy"
+      ],
+      "level": 2,
+      "severity": "high",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-2.1.4",
+      "clause_text": "Ensure Organizational Units are structured by environment and sensitivity",
+      "rationale": "A clear OU structure based on environment and sensitivity makes it easier to apply consistent guardrails and centralized security controls to accounts that have similar risk profiles and compliance needs.",
+      "remediation_hint": "Use the aws_organizations_organizational_unit resource to create and manage OUs based on environment and sensitivity.",
+      "requirement_type": "access_control",
+      "check_targets": [
+        "aws_organizations_organizational_unit"
+      ],
+      "level": 2,
+      "severity": "medium",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-2.1.5",
+      "clause_text": "Ensure delegated admin manages AWS Organizations policies",
+      "rationale": "The management account has unique and high privileges, and without a delegated administrator, all policy management must be performed directly from it, concentrating operational activity in the most powerful account.",
+      "remediation_hint": "Create or identify a dedicated member account for governance/policy management and configure it as a delegated administrator in AWS Organizations.",
+      "requirement_type": "access_control",
+      "check_targets": [
+        "aws_organizations_delegated_administrator"
+      ],
+      "level": 2,
+      "severity": "medium",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-2.1.6",
+      "clause_text": "Ensure delegated admins manage AWS Organizations-integrated services",
+      "rationale": "The management account has unique and high privileges, and without delegated administrators, security and management services must be operated directly from it, increasing risk. Delegated administrators help distribute service-specific administration and reduce reliance on the management account.",
+      "remediation_hint": "Use the aws_organizations_delegated_administrator resource to register a member account as a delegated administrator for AWS services.",
+      "requirement_type": "access_control",
+      "check_targets": [
+        "aws_organizations_delegated_administrator"
+      ],
+      "level": 2,
+      "severity": "medium",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-2.3",
+      "clause_text": "Ensure security contact information is registered",
+      "rationale": "Specifying security-specific contact information helps ensure that security advisories sent by AWS reach the team within your organization that is best equipped to respond to them.",
+      "remediation_hint": "Use the aws_organizations_account resource to set the security contact information.",
+      "requirement_type": "monitoring",
+      "check_targets": [
+        "aws_organizations_account"
+      ],
+      "level": 1,
+      "severity": "medium",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-2.4",
+      "clause_text": "Ensure no 'root' user account access key exists",
+      "rationale": "Deleting access keys associated with the 'root' user account limits the vectors by which the account can be compromised. Additionally, removing 'root' access keys encourages the use of role-based access with least privilege.",
+      "remediation_hint": "Remove access keys from the aws_iam_user resource.",
+      "requirement_type": "access_control",
+      "check_targets": [
+        "aws_iam_user"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-4.3",
+      "clause_text": "Ensure that all users with administrative account access use a dedicated or secondary account for elevated activities.",
+      "rationale": "Using dedicated administrative accounts helps to minimize the risk of accidental or malicious actions that could compromise the security of the environment. It ensures that administrative privileges are only used when necessary and reduces the attack surface.",
+      "remediation_hint": "Use aws_iam_user with appropriate policies to enforce dedicated administrative accounts.",
+      "requirement_type": "access_control",
+      "check_targets": [
+        "aws_iam_user"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-2.5",
+      "clause_text": "Ensure MFA is enabled for the 'root' user account",
+      "rationale": "Enabling MFA increases security for console access by requiring the authenticating principal to possess a device that generates a time-sensitive authentication code, in addition to their credentials.",
+      "remediation_hint": "Use the aws_iam_user resource to manage MFA for the root account.",
+      "requirement_type": "access_control",
+      "check_targets": [
+        "aws_iam_user"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-4.5",
+      "clause_text": "Use multi-factor authentication and encrypted channels for all administrative account access.",
+      "rationale": "Implementing multi-factor authentication significantly reduces the risk of unauthorized access to administrative accounts, thereby enhancing the overall security posture of the environment.",
+      "remediation_hint": "Ensure that the 'aws_iam_user' resource has MFA configured.",
+      "requirement_type": "access_control",
+      "check_targets": [
+        "aws_iam_user",
+        "aws_iam_role"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-2.6",
+      "clause_text": "Ensure hardware MFA is enabled for the 'root' user account",
+      "rationale": "A hardware MFA device has a smaller attack surface than a virtual MFA, reducing the risk of unauthorized access to the root account.",
+      "remediation_hint": "Configure the aws_iam_user resource to enable hardware MFA for the root account.",
+      "requirement_type": "access_control",
+      "check_targets": [
+        "aws_iam_user"
+      ],
+      "level": 2,
+      "severity": "high",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-4.5b",
+      "clause_text": "Use multi-factor authentication and encrypted channels for all administrative account access.",
+      "rationale": "Using multi-factor authentication enhances security by requiring additional verification, reducing the risk of unauthorized access to administrative accounts.",
+      "remediation_hint": "Ensure that MFA is enabled for IAM users and roles.",
+      "requirement_type": "access_control",
+      "check_targets": [
+        "aws_iam_user",
+        "aws_iam_role"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-4.3b",
+      "clause_text": "Ensure that all users with administrative account access use a dedicated or secondary account for elevated activities.",
+      "rationale": "Using dedicated administrative accounts helps to minimize the risk of accidental or malicious actions that could compromise the security of the environment. It also aids in tracking and auditing administrative actions more effectively.",
+      "remediation_hint": "Use the aws_iam_user resource to create dedicated administrative accounts.",
+      "requirement_type": "access_control",
+      "check_targets": [
+        "aws_iam_user"
+      ],
+      "level": 1,
+      "severity": "medium",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-2.8",
+      "clause_text": "Ensure IAM password policy requires minimum length of 14 or greater",
+      "rationale": "Setting a password policy with sufficient length requirements increases account resilience against brute force login attempts.",
+      "remediation_hint": "Use the aws_iam_account_password_policy resource to set the minimum_password_length attribute.",
+      "requirement_type": "access_control",
+      "check_targets": [
+        "aws_iam_account_password_policy"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-5.2",
+      "clause_text": "Use unique passwords for all enterprise assets. Best practice implementation includes, at a minimum, an 8-character password for accounts using MFA and a 14-character password for accounts not using MFA.",
+      "rationale": "Using unique passwords helps to mitigate the risk of unauthorized access to enterprise assets. It ensures that even if one password is compromised, other accounts remain secure.",
+      "remediation_hint": "Ensure that the 'password' attribute of 'aws_iam_user' is set to a unique value that meets the length requirements.",
+      "requirement_type": "secrets_management",
+      "check_targets": [
+        "aws_iam_user"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-2.9",
+      "clause_text": "Ensure IAM password policy prevents password reuse",
+      "rationale": "Preventing password reuse increases account resilience against brute force and credential reuse attacks.",
+      "remediation_hint": "Configure the aws_iam_account_password_policy resource to set password reuse prevention.",
+      "requirement_type": "access_control",
+      "check_targets": [
+        "aws_iam_account_password_policy"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-4.4",
+      "clause_text": "Where multi-factor authentication is not supported (such as local administrator, root, or service accounts), accounts will use passwords that are unique to that system.",
+      "rationale": "Using unique passwords for each account helps to mitigate the risk of credential theft and unauthorized access. It ensures that even if one password is compromised, other accounts remain secure.",
+      "remediation_hint": "Use the 'aws_iam_user' resource to enforce unique passwords for IAM users.",
+      "requirement_type": "access_control",
+      "check_targets": [
+        "aws_iam_user"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-2.10",
+      "clause_text": "Ensure multi-factor authentication (MFA) is enabled for all IAM users that have a console password",
+      "rationale": "Enabling MFA increases security for console access by requiring the authenticating principal to possess a device that generates a time-sensitive authentication code, in addition to their credentials.",
+      "remediation_hint": "Use the aws_iam_user resource and set the mfa_devices attribute.",
+      "requirement_type": "access_control",
+      "check_targets": [
+        "aws_iam_user"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-4.5b",
+      "clause_text": "Use multi-factor authentication and encrypted channels for all administrative account access.",
+      "rationale": "Implementing multi-factor authentication significantly reduces the risk of unauthorized access to administrative accounts. It adds an additional layer of security beyond just a password.",
+      "remediation_hint": "Ensure that the 'aws_iam_user' resource has MFA configured.",
+      "requirement_type": "access_control",
+      "check_targets": [
+        "aws_iam_user"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-2.11",
+      "clause_text": "Ensure credentials unused for 45 days or more are disabled",
+      "rationale": "Disabling or removing unused credentials reduces the window of opportunity for credentials associated with a compromised or abandoned account to be used.",
+      "remediation_hint": "Use the aws_iam_user resource to manage user credentials and ensure they are deactivated if unused for 45 days.",
+      "requirement_type": "access_control",
+      "check_targets": [
+        "aws_iam_user"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-2.12",
+      "clause_text": "Ensure access keys are rotated every 90 days or less",
+      "rationale": "Rotating access keys reduces the window of opportunity for a compromised or exposed key to be used. Regular rotation also limits the risk associated with lost, stolen, or improperly stored credentials.",
+      "remediation_hint": "Use the aws_iam_access_key resource to manage access key rotation.",
+      "requirement_type": "access_control",
+      "check_targets": [
+        "aws_iam_user",
+        "aws_iam_access_key"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-2.13",
+      "clause_text": "Ensure IAM users receive permissions only through groups",
+      "rationale": "Assigning IAM policies through groups centralizes permissions management and aligns access with organizational roles. This reduces complexity and lowers the likelihood of excessive or inconsistent permissions.",
+      "remediation_hint": "Use the 'aws_iam_group' resource to manage user permissions through groups.",
+      "requirement_type": "access_control",
+      "check_targets": [
+        "aws_iam_user",
+        "aws_iam_group"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-2.14",
+      "clause_text": "Ensure IAM policies that allow full \"*:*\" administrative privileges are not attached",
+      "rationale": "It is more secure to start with a minimal set of permissions and grant additional permissions as necessary, rather than starting with overly permissive access and attempting to restrict it later.",
+      "remediation_hint": "Detach IAM policies from users, groups, or roles that allow full administrative privileges.",
+      "requirement_type": "access_control",
+      "check_targets": [
+        "aws_iam_policy",
+        "aws_iam_user",
+        "aws_iam_group",
+        "aws_iam_role"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-2.15",
+      "clause_text": "Ensure a support role has been created to manage incidents with AWS Support",
+      "rationale": "Following the principle of least privilege, an IAM role should be used with a scoped policy to allow access to AWS Support. This ensures only authorized users can manage support cases without requiring broad administrative access.",
+      "remediation_hint": "Create an IAM role with the AWSSupportAccess policy attached.",
+      "requirement_type": "access_control",
+      "check_targets": [
+        "aws_iam_role"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-2.16",
+      "clause_text": "Ensure IAM instance roles are used for AWS resource access from instances (Automated)",
+      "rationale": "IAM roles reduce the risks associated with storing, sharing, and rotating long-term credentials. Compromised credentials can be used outside of AWS, whereas IAM role credentials are temporary and tied to the instance.",
+      "remediation_hint": "Use the 'aws_iam_instance_profile' resource to attach an IAM role to your EC2 instances.",
+      "requirement_type": "access_control",
+      "check_targets": [
+        "aws_iam_instance_profile",
+        "aws_ec2_instance"
+      ],
+      "level": 2,
+      "severity": "medium",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-2.17",
+      "clause_text": "Ensure that all expired SSL/TLS certificates stored in AWS IAM are removed (Automated)",
+      "rationale": "Removing expired SSL/TLS certificates eliminates the risk that an invalid certificate will be deployed accidentally, which can damage the credibility of the application or website.",
+      "remediation_hint": "Use the aws_iam_server_certificate resource to manage SSL/TLS certificates in Terraform.",
+      "requirement_type": "secrets_management",
+      "check_targets": [
+        "aws_iam_server_certificate"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-2.18",
+      "clause_text": "Ensure that IAM External Access Analyzer is enabled for all regions (Automated)",
+      "rationale": "IAM External Access Analyzer helps identify resources in your account or organization that are shared with external entities, allowing detection of unintended access to resources and data.",
+      "remediation_hint": "Use the aws_accessanalyzer_analyzer resource to create an analyzer in each region.",
+      "requirement_type": "monitoring",
+      "check_targets": [
+        "aws_accessanalyzer_analyzer"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-2.19",
+      "clause_text": "Ensure IAM users are managed centrally via identity federation or AWS Organizations for multi-account environments",
+      "rationale": "Centralizing IAM user management reduces complexity and the likelihood of access management errors. It helps mitigate risks associated with inconsistent access controls and excessive permissions.",
+      "remediation_hint": "Use the aws_iam_identity_center resource to manage IAM users centrally.",
+      "requirement_type": "access_control",
+      "check_targets": [
+        "aws_iam_user",
+        "aws_iam_identity_provider",
+        "aws_organizations_account"
+      ],
+      "level": 2,
+      "severity": "medium",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-2.20",
+      "clause_text": "Ensure access to AWSCloudShellFullAccess is restricted",
+      "rationale": "Access to this policy should be restricted, as it presents a potential channel for data exfiltration by privileged users.",
+      "remediation_hint": "Detach the AWSCloudShellFullAccess policy from any users, groups, or roles.",
+      "requirement_type": "access_control",
+      "check_targets": [
+        "aws_iam_policy",
+        "aws_iam_user",
+        "aws_iam_group",
+        "aws_iam_role"
+      ],
+      "level": 1,
+      "severity": "medium",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-2.21b",
+      "clause_text": "Ensure AWS resource policies do not allow unrestricted access using \"Principal\": \"*\"",
+      "rationale": "Resource-based policies that allow unrestricted access can lead to unauthorized data access and resource abuse. This significantly increases the risk of data breaches and unintended exposure.",
+      "remediation_hint": "Modify the resource policy to limit access by replacing wildcard principals with specific accounts, roles, or services.",
+      "requirement_type": "access_control",
+      "check_targets": [
+        "aws_s3_bucket",
+        "aws_sqs_queue",
+        "aws_sns_topic",
+        "aws_lambda_function"
+      ],
+      "level": 1,
+      "severity": "medium",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-3.1.1",
+      "clause_text": "Ensure S3 Bucket Policy is set to deny HTTP requests",
+      "rationale": "By default, Amazon S3 allows both HTTP and HTTPS requests. To ensure that access to S3 objects is only permitted through HTTPS, you must explicitly deny HTTP requests.",
+      "remediation_hint": "Update the S3 bucket policy to include a condition that denies HTTP requests.",
+      "requirement_type": "access_control",
+      "check_targets": [
+        "aws_s3_bucket"
+      ],
+      "level": 2,
+      "severity": "high",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-3.1.2",
+      "clause_text": "Ensure MFA Delete is enabled on S3 buckets",
+      "rationale": "Adding MFA delete to an S3 bucket requires additional authentication when you change the version state of your bucket or delete an object version, adding another layer of security in the event your security credentials are compromised or unauthorized access is granted.",
+      "remediation_hint": "Use the aws_s3_bucket resource with the versioning_configuration attribute to enable MFA Delete.",
+      "requirement_type": "access_control",
+      "check_targets": [
+        "aws_s3_bucket"
+      ],
+      "level": 2,
+      "severity": "high",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-3.1.3",
+      "clause_text": "Ensure all data in Amazon S3 has been discovered, classified, and secured when necessary",
+      "rationale": "Using a cloud service or third-party software to continuously monitor and automate the process of data discovery and classification for S3 buckets is essential for protecting sensitive information.",
+      "remediation_hint": "Enable and configure the aws_s3_bucket resource with appropriate settings for data discovery and classification.",
+      "requirement_type": "monitoring",
+      "check_targets": [
+        "aws_s3_bucket"
+      ],
+      "level": 2,
+      "severity": "high",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-3.1.4",
+      "clause_text": "Ensure that S3 is configured with 'Block Public Access' enabled",
+      "rationale": "Amazon S3 Block public access settings prevent accidental or malicious public exposure of sensitive data contained within S3 buckets.",
+      "remediation_hint": "Use the aws_s3_bucket resource with the block_public_acls and ignore_public_acls attributes set to true.",
+      "requirement_type": "access_control",
+      "check_targets": [
+        "aws_s3_bucket"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-3.2.1",
+      "clause_text": "Ensure that encryption-at-rest is enabled for RDS instances",
+      "rationale": "Databases are likely to hold sensitive and critical data; therefore, it is highly recommended to implement encryption to protect your data from unauthorized access or disclosure.",
+      "remediation_hint": "Set the 'storage_encrypted' attribute to true in the 'aws_db_instance' resource.",
+      "requirement_type": "encryption",
+      "check_targets": [
+        "aws_db_instance"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-3.2.2",
+      "clause_text": "Ensure the Auto Minor Version Upgrade feature is enabled for RDS instances",
+      "rationale": "Enabling the Auto Minor Version Upgrade feature allows RDS instances to automatically receive minor engine upgrades, ensuring they benefit from new features, bug fixes, and security patches.",
+      "remediation_hint": "Set the auto_minor_version_upgrade attribute to true in the aws_db_instance resource.",
+      "requirement_type": "patching",
+      "check_targets": [
+        "aws_db_instance"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-3.2.3",
+      "clause_text": "Ensure that RDS instances are not publicly accessible",
+      "rationale": "Ensuring that no public-facing RDS database instances are provisioned minimizes security risks. Publicly accessible instances can be targeted for malicious activities, increasing the risk of data breaches.",
+      "remediation_hint": "Set the 'publicly_accessible' attribute of the 'aws_db_instance' resource to false.",
+      "requirement_type": "access_control",
+      "check_targets": [
+        "aws_db_instance",
+        "aws_security_group"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-3.2.4b",
+      "clause_text": "Ensure Multi-AZ deployments are used for enhanced availability in Amazon RDS",
+      "rationale": "Database availability is crucial for maintaining service uptime, particularly for applications that are critical to the business. Implementing Multi-AZ deployments with Amazon RDS ensures that your databases are protected against unplanned outages.",
+      "remediation_hint": "Set the 'multi_az' attribute to true in the 'aws_db_instance' resource.",
+      "requirement_type": "backup",
+      "check_targets": [
+        "aws_db_instance"
+      ],
+      "level": 1,
+      "severity": "medium",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-3.3.1",
+      "clause_text": "Ensure that encryption is enabled for EFS file systems",
+      "rationale": "Data should be encrypted at rest to reduce the risk of a data breach via direct access to the storage device.",
+      "remediation_hint": "Set the 'encrypted' attribute to true in the 'aws_efs_file_system' resource.",
+      "requirement_type": "encryption",
+      "check_targets": [
+        "aws_efs_file_system"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-4.1",
+      "clause_text": "Ensure CloudTrail is enabled in all regions",
+      "rationale": "The AWS API call history produced by CloudTrail enables security analysis, resource change tracking, and compliance auditing.",
+      "remediation_hint": "Use the aws_cloudtrail resource to create a multi-region trail.",
+      "requirement_type": "logging",
+      "check_targets": [
+        "aws_cloudtrail"
+      ],
+      "level": 1,
+      "severity": "medium",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-4.2",
+      "clause_text": "Ensure CloudTrail log file validation is enabled",
+      "rationale": "Enabling log file validation will provide additional integrity checks for CloudTrail logs.",
+      "remediation_hint": "Set the enable_log_file_validation attribute to true in the aws_cloudtrail resource.",
+      "requirement_type": "logging",
+      "check_targets": [
+        "aws_cloudtrail"
+      ],
+      "level": 2,
+      "severity": "high",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-4.3b",
+      "clause_text": "Ensure AWS Config is enabled in all regions",
+      "rationale": "The AWS configuration item history captured by AWS Config enables security analysis, resource change tracking, and compliance auditing.",
+      "remediation_hint": "Use the aws_config_configuration_recorder resource to enable AWS Config.",
+      "requirement_type": "monitoring",
+      "check_targets": [
+        "aws_config_configuration_recorder"
+      ],
+      "level": 2,
+      "severity": "high",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-4.4b",
+      "clause_text": "Ensure that server access logging is enabled on the CloudTrail S3 bucket",
+      "rationale": "By enabling server access logging on target S3 buckets, it is possible to capture all events that may affect objects within any target bucket. This provides visibility into who accessed log files or how they were used.",
+      "remediation_hint": "Set the 'logging' attribute of the 'aws_s3_bucket' resource to enable server access logging.",
+      "requirement_type": "logging",
+      "check_targets": [
+        "aws_s3_bucket"
+      ],
+      "level": 1,
+      "severity": "medium",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-4.5b",
+      "clause_text": "Ensure CloudTrail logs are encrypted at rest using KMS CMKs (Automated)",
+      "rationale": "Configuring CloudTrail to use SSE-KMS provides additional confidentiality controls on log data, ensuring that only authorized users can access and decrypt the logs.",
+      "remediation_hint": "Use the aws_cloudtrail resource and set the kms_key_id attribute to specify the KMS key for encryption.",
+      "requirement_type": "encryption",
+      "check_targets": [
+        "aws_cloudtrail"
+      ],
+      "level": 2,
+      "severity": "high",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-4.6",
+      "clause_text": "Ensure rotation for customer-created symmetric CMKs is enabled",
+      "rationale": "Rotating encryption keys helps reduce the potential impact of a compromised key, as data encrypted with a new key cannot be accessed with a previous key that may have been exposed.",
+      "remediation_hint": "Use the aws_kms_key resource with the enable_key_rotation attribute set to true.",
+      "requirement_type": "secrets_management",
+      "check_targets": [
+        "aws_kms_key"
+      ],
+      "level": 2,
+      "severity": "high",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-4.7",
+      "clause_text": "Ensure VPC flow logging is enabled in all VPCs (Automated)",
+      "rationale": "VPC Flow Logs provide visibility into network traffic that traverses the VPC and can be used to detect anomalous traffic or gain insights during security workflows.",
+      "remediation_hint": "Use the aws_vpc_flow_log resource to enable flow logging for your VPC.",
+      "requirement_type": "logging",
+      "check_targets": [
+        "aws_vpc",
+        "aws_vpc_flow_log"
+      ],
+      "level": 2,
+      "severity": "medium",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-4.8",
+      "clause_text": "Ensure that object-level logging for write events is enabled for S3 buckets (Automated)",
+      "rationale": "Enabling object-level logging will help you meet data compliance requirements within your organization and perform comprehensive security analyses.",
+      "remediation_hint": "Configure the aws_s3_bucket resource to enable logging for data events.",
+      "requirement_type": "logging",
+      "check_targets": [
+        "aws_s3_bucket"
+      ],
+      "level": 2,
+      "severity": "high",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-4.9",
+      "clause_text": "Ensure that object-level logging for read events is enabled for S3 buckets (Automated)",
+      "rationale": "Enabling object-level logging will help you meet data compliance requirements within your organization and perform comprehensive security analyses.",
+      "remediation_hint": "Use the aws_s3_bucket resource and set the appropriate CloudTrail data events configuration.",
+      "requirement_type": "logging",
+      "check_targets": [
+        "aws_s3_bucket"
+      ],
+      "level": 2,
+      "severity": "high",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-4.10b",
+      "clause_text": "Ensure all AWS-managed web front-end services have access logging enabled",
+      "rationale": "AWS-managed web front-end services are critical for monitoring web traffic and detecting anomalies, which is essential for security and compliance.",
+      "remediation_hint": "Enable access logging for resources like aws_cloudfront_distribution, aws_lb, and aws_api_gateway_stage.",
+      "requirement_type": "logging",
+      "check_targets": [
+        "aws_cloudfront_distribution",
+        "aws_lb",
+        "aws_api_gateway_stage"
+      ],
+      "level": 1,
+      "severity": "medium",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-5.1",
+      "clause_text": "Ensure unauthorized API calls are monitored",
+      "rationale": "Monitoring unauthorized API calls helps reduce the time it takes to detect malicious activity and can alert you to potential security incidents.",
+      "remediation_hint": "Use aws_cloudwatch_metric_alarm to set up alarms for unauthorized API calls.",
+      "requirement_type": "monitoring",
+      "check_targets": [
+        "aws_cloudtrail",
+        "aws_cloudwatch_log_group",
+        "aws_cloudwatch_metric_alarm",
+        "aws_sns_topic"
+      ],
+      "level": 2,
+      "severity": "medium",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-6.3",
+      "clause_text": "Enable system logging to include detailed information such as an event source, date, user, timestamp, source addresses, destination addresses, and other useful elements.",
+      "rationale": "Enabling detailed logging is crucial for tracking user activities and identifying potential security incidents. It helps in forensic analysis and compliance with regulatory requirements.",
+      "remediation_hint": "Use the 'aws_cloudwatch_log_group' resource to configure logging for your AWS services.",
+      "requirement_type": "logging",
+      "check_targets": [
+        "aws_cloudwatch_log_group",
+        "aws_s3_bucket"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-5.2b",
+      "clause_text": "Ensure management console sign-in without MFA is monitored",
+      "rationale": "Monitoring for single-factor console logins will increase visibility into accounts that are not protected by MFA. These type of accounts are more susceptible to compromise and unauthorized access.",
+      "remediation_hint": "Create a CloudWatch metric filter for console logins without MFA using the appropriate log group.",
+      "requirement_type": "monitoring",
+      "check_targets": [
+        "aws_cloudwatch_log_group",
+        "aws_cloudtrail_trail",
+        "aws_cloudwatch_metric_alarm",
+        "aws_sns_topic"
+      ],
+      "level": 1,
+      "severity": "medium",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-5.3",
+      "clause_text": "Ensure usage of the 'root' account is monitored (Manual)",
+      "rationale": "Monitoring 'root' account logins provides visibility into the use of a fully privileged account and helps reduce its usage, thereby enhancing security.",
+      "remediation_hint": "Use aws_cloudwatch_metric_alarm to set up alarms for root account usage.",
+      "requirement_type": "monitoring",
+      "check_targets": [
+        "aws_cloudtrail",
+        "aws_cloudwatch_log_group",
+        "aws_cloudwatch_metric_alarm",
+        "aws_sns_topic"
+      ],
+      "level": 1,
+      "severity": "medium",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-5.4",
+      "clause_text": "Ensure IAM policy changes are monitored",
+      "rationale": "Monitoring changes to IAM policies will help ensure authentication and authorization controls remain intact.",
+      "remediation_hint": "Use aws_cloudwatch_metric_alarm to set up alarms for IAM policy changes.",
+      "requirement_type": "monitoring",
+      "check_targets": [
+        "aws_cloudtrail",
+        "aws_cloudwatch_log_group",
+        "aws_cloudwatch_metric_alarm",
+        "aws_sns_topic"
+      ],
+      "level": 1,
+      "severity": "medium",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-5.5",
+      "clause_text": "Ensure CloudTrail configuration changes are monitored",
+      "rationale": "Monitoring changes to CloudTrail's configuration will help ensure sustained visibility into the activities performed in the AWS account.",
+      "remediation_hint": "Use aws_cloudwatch_metric_alarm to set up alarms for CloudTrail configuration changes.",
+      "requirement_type": "monitoring",
+      "check_targets": [
+        "aws_cloudtrail",
+        "aws_cloudwatch_log_group",
+        "aws_cloudwatch_metric_alarm",
+        "aws_sns_topic"
+      ],
+      "level": 1,
+      "severity": "medium",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-5.6",
+      "clause_text": "Ensure AWS Management Console authentication failures are monitored",
+      "rationale": "Monitoring failed console logins may decrease the lead time to detect an attempt to brute-force a credential, which may provide an indicator, such as the source IP address, that can be used in other event correlations.",
+      "remediation_hint": "Create a metric filter for AWS management Console login failures using the appropriate CloudWatch log group.",
+      "requirement_type": "monitoring",
+      "check_targets": [
+        "aws_cloudwatch_log_group",
+        "aws_cloudwatch_metric_alarm",
+        "aws_sns_topic"
+      ],
+      "level": 2,
+      "severity": "medium",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-5.7",
+      "clause_text": "Ensure disabling or scheduled deletion of customer created CMKs is monitored (Manual)",
+      "rationale": "Monitoring the state changes of customer-managed keys (CMKs) is crucial to ensure that any changes are intentional, as data encrypted with disabled or deleted keys will no longer be accessible.",
+      "remediation_hint": "Set up a CloudWatch metric filter and alarm for CMKs using the appropriate log group.",
+      "requirement_type": "monitoring",
+      "check_targets": [
+        "aws_cloudwatch_metric_filter",
+        "aws_cloudwatch_alarm",
+        "aws_sns_topic",
+        "aws_sns_subscription"
+      ],
+      "level": 2,
+      "severity": "medium",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-5.8",
+      "clause_text": "Ensure S3 bucket policy changes are monitored",
+      "rationale": "Monitoring changes to S3 bucket policies may reduce the time it takes to detect and correct permissive policies on sensitive S3 buckets.",
+      "remediation_hint": "Create a CloudWatch metric filter for S3 bucket policy changes.",
+      "requirement_type": "monitoring",
+      "check_targets": [
+        "aws_cloudwatch_log_group",
+        "aws_cloudtrail",
+        "aws_cloudwatch_metric_alarm",
+        "aws_sns_topic"
+      ],
+      "level": 1,
+      "severity": "medium",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-5.9",
+      "clause_text": "Ensure AWS Config configuration changes are monitored",
+      "rationale": "Monitoring changes to the AWS Config configuration will help ensure sustained visibility of the configuration items within the AWS account.",
+      "remediation_hint": "Use aws_cloudwatch_metric_alarm to set up alarms for AWS Config changes.",
+      "requirement_type": "monitoring",
+      "check_targets": [
+        "aws_cloudtrail",
+        "aws_cloudwatch_log_group",
+        "aws_cloudwatch_metric_alarm",
+        "aws_sns_topic"
+      ],
+      "level": 2,
+      "severity": "medium",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-6.3b",
+      "clause_text": "Enable system logging to include detailed information such as an event source, date, user, timestamp, source addresses, destination addresses, and other useful elements.",
+      "rationale": "Detailed logging is essential for monitoring and auditing system activities, helping to identify and respond to security incidents effectively.",
+      "remediation_hint": "Use the aws_cloudwatch_log_group resource to enable detailed logging for your AWS services.",
+      "requirement_type": "logging",
+      "check_targets": [
+        "aws_cloudwatch_log_group",
+        "aws_s3_bucket"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-5.10",
+      "clause_text": "Ensure security group changes are monitored",
+      "rationale": "Monitoring changes to security groups will help ensure that resources and services are not unintentionally exposed.",
+      "remediation_hint": "Use aws_cloudwatch_metric_alarm to set up alarms for security group changes.",
+      "requirement_type": "monitoring",
+      "check_targets": [
+        "aws_cloudtrail",
+        "aws_cloudwatch_log_group",
+        "aws_cloudwatch_metric_alarm",
+        "aws_sns_topic"
+      ],
+      "level": 2,
+      "severity": "high",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-6.3b",
+      "clause_text": "Enable system logging to include detailed information such as an event source, date, user, timestamp, source addresses, destination addresses, and other useful elements.",
+      "rationale": "Detailed logging is essential for monitoring and auditing access to systems, helping to identify unauthorized access and potential security incidents. It provides valuable information for incident response and compliance purposes.",
+      "remediation_hint": "Use the aws_cloudtrail resource to enable logging for AWS services.",
+      "requirement_type": "logging",
+      "check_targets": [
+        "aws_cloudtrail"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-5.11",
+      "clause_text": "Ensure Network Access Control List (NACL) changes are monitored",
+      "rationale": "Monitoring changes to NACLs will help ensure that AWS resources and services are not unintentionally exposed. It allows for real-time detection of potentially harmful changes.",
+      "remediation_hint": "Create a CloudWatch metric filter for NACL changes using 'aws_cloudwatch_metric_filter'.",
+      "requirement_type": "monitoring",
+      "check_targets": [
+        "aws_cloudtrail",
+        "aws_cloudwatch_log_group",
+        "aws_cloudwatch_metric_alarm",
+        "aws_sns_topic"
+      ],
+      "level": 2,
+      "severity": "medium",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-11.3",
+      "clause_text": "Use Automated Tools to Verify Standard Device Configurations and Detect Changes",
+      "rationale": "Automated verification of device configurations helps ensure compliance with security standards and quickly identifies unauthorized changes that could lead to vulnerabilities.",
+      "remediation_hint": "Use aws_config_configuration_recorder to monitor configuration changes.",
+      "requirement_type": "monitoring",
+      "check_targets": [
+        "aws_config_configuration_recorder",
+        "aws_config_rule"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-5.12",
+      "clause_text": "Ensure changes to network gateways are monitored",
+      "rationale": "Monitoring changes to network gateways helps detect unauthorized modifications that could compromise network security. Implementing automated monitoring and alerts can improve incident response times.",
+      "remediation_hint": "Use aws_cloudwatch_metric_alarm to set up alarms for network gateway changes.",
+      "requirement_type": "monitoring",
+      "check_targets": [
+        "aws_cloudwatch_log_group",
+        "aws_cloudtrail",
+        "aws_cloudwatch_metric_alarm",
+        "aws_sns_topic"
+      ],
+      "level": 1,
+      "severity": "medium",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-5.13",
+      "clause_text": "Ensure route table changes are monitored",
+      "rationale": "Monitoring changes to route tables helps ensure that all VPC traffic flows through the expected path and prevents any accidental or intentional modifications that may lead to uncontrolled network traffic.",
+      "remediation_hint": "Use aws_cloudwatch_metric_alarm to set up alarms for route table changes.",
+      "requirement_type": "monitoring",
+      "check_targets": [
+        "aws_cloudtrail",
+        "aws_cloudwatch_log_group",
+        "aws_cloudwatch_metric_alarm",
+        "aws_sns_topic"
+      ],
+      "level": 1,
+      "severity": "medium",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-5.14",
+      "clause_text": "Ensure VPC changes are monitored",
+      "rationale": "Monitoring changes to VPC configurations helps ensure that VPC traffic flow is not negatively impacted, which can affect network accessibility and resource connectivity.",
+      "remediation_hint": "Use aws_cloudwatch_metric_alarm to set up alarms for VPC changes.",
+      "requirement_type": "monitoring",
+      "check_targets": [
+        "aws_cloudtrail",
+        "aws_cloudwatch_log_group",
+        "aws_cloudwatch_metric_alarm",
+        "aws_sns_topic"
+      ],
+      "level": 1,
+      "severity": "medium",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-5.15",
+      "clause_text": "Ensure AWS Organizations changes are monitored",
+      "rationale": "Monitoring AWS Organizations changes can help you prevent unwanted, accidental, or intentional modifications that may lead to unauthorized access or other security breaches.",
+      "remediation_hint": "Use aws_cloudwatch_log_group and aws_cloudwatch_metric_alarm to configure monitoring.",
+      "requirement_type": "monitoring",
+      "check_targets": [
+        "aws_cloudtrail",
+        "aws_cloudwatch_log_group",
+        "aws_cloudwatch_metric_alarm",
+        "aws_sns_topic"
+      ],
+      "level": 1,
+      "severity": "medium",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-6.3b",
+      "clause_text": "Enable system logging to include detailed information such as an event source, date, user, timestamp, source addresses, destination addresses, and other useful elements.",
+      "rationale": "Enabling detailed logging is crucial for monitoring and auditing access to systems, which helps in identifying unauthorized access and potential security incidents. It also aids in compliance with regulatory requirements and enhances overall security posture.",
+      "remediation_hint": "Use the aws_cloudtrail resource to enable logging for AWS services.",
+      "requirement_type": "logging",
+      "check_targets": [
+        "aws_cloudtrail"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-5.16b",
+      "clause_text": "Ensure AWS Security Hub is enabled (Automated)",
+      "rationale": "AWS Security Hub provides a comprehensive view of your security state in AWS, helping you assess your security posture across accounts and identify high-priority issues.",
+      "remediation_hint": "Use the aws_securityhub_account resource to enable Security Hub.",
+      "requirement_type": "monitoring",
+      "check_targets": [
+        "aws_securityhub_account"
+      ],
+      "level": 2,
+      "severity": "high",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-11.3b",
+      "clause_text": "Use Automated Tools to Verify Standard Device Configurations and Detect Changes",
+      "rationale": "Automated verification of device configurations helps ensure compliance with security standards and quickly identifies unauthorized changes that could lead to vulnerabilities.",
+      "remediation_hint": "Use aws_config_configuration_recorder and aws_config_rule to monitor configuration compliance.",
+      "requirement_type": "monitoring",
+      "check_targets": [
+        "aws_config_configuration_recorder",
+        "aws_config_rule"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-6.1.1",
+      "clause_text": "Ensure EBS volume encryption is enabled in all regions",
+      "rationale": "Encrypting data at rest reduces the likelihood of unintentional exposure and can nullify the impact of disclosure if the encryption remains unbroken.",
+      "remediation_hint": "Set the 'ebs_block_device' resource with 'encrypted = true' in Terraform.",
+      "requirement_type": "encryption",
+      "check_targets": [
+        "aws_ebs_volume"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-6.1.2",
+      "clause_text": "Ensure CIFS access is restricted to trusted networks to prevent unauthorized access",
+      "rationale": "Allowing unrestricted CIFS access can lead to significant security vulnerabilities, as it may allow unauthorized users to access sensitive files and data.",
+      "remediation_hint": "Modify the aws_security_group resource to restrict access on port 445.",
+      "requirement_type": "networking",
+      "check_targets": [
+        "aws_security_group"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-6.2",
+      "clause_text": "Ensure no Network ACLs allow ingress from 0.0.0.0/0 to remote server administration ports",
+      "rationale": "Public access to remote server administration ports increases the attack surface of resources and raises the risk of resource compromise.",
+      "remediation_hint": "Update the 'aws_network_acl' resource to deny ingress from 0.0.0.0/0 on ports 22 and 3389.",
+      "requirement_type": "networking",
+      "check_targets": [
+        "aws_network_acl"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-9.2",
+      "clause_text": "Ensure that only network ports, protocols, and services listening on a system with validated business needs, are running on each system.",
+      "rationale": "Limiting the network ports, protocols, and services reduces the attack surface and minimizes the risk of unauthorized access or exploitation of vulnerabilities. This is crucial for maintaining the security posture of the organization.",
+      "remediation_hint": "Use the 'aws_security_group' resource to define allowed inbound and outbound rules for network traffic.",
+      "requirement_type": "networking",
+      "check_targets": [
+        "aws_security_group"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-6.3b",
+      "clause_text": "Ensure no security groups allow ingress from 0.0.0.0/0 to remote server administration ports",
+      "rationale": "Public access to remote server administration ports increases the attack surface of resources and raises the risk of resource compromise.",
+      "remediation_hint": "Update the 'aws_security_group' resource to restrict ingress rules.",
+      "requirement_type": "networking",
+      "check_targets": [
+        "aws_security_group"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-6.4",
+      "clause_text": "Ensure no security groups allow ingress from ::/0 to remote server administration ports",
+      "rationale": "Public access to remote server administration ports increases the attack surface of resources and raises the risk of resource compromise.",
+      "remediation_hint": "Update the 'aws_security_group' resource to restrict ingress from ::/0.",
+      "requirement_type": "networking",
+      "check_targets": [
+        "aws_security_group"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-6.5",
+      "clause_text": "Ensure the default security group of every VPC restricts all traffic",
+      "rationale": "Configuring all VPC default security groups to restrict all traffic will encourage the development of least privilege security groups and promote the mindful placement of AWS resources into security groups, which will, in turn, reduce the exposure of those resources.",
+      "remediation_hint": "Update the 'aws_security_group' resource to have no inbound or outbound rules.",
+      "requirement_type": "networking",
+      "check_targets": [
+        "aws_security_group"
+      ],
+      "level": 2,
+      "severity": "medium",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-6.6",
+      "clause_text": "Ensure routing tables for VPC peering are \"least access\"",
+      "rationale": "Being highly selective in peering routing tables is a very effective way to minimize the impact of a breach, as resources outside of these routes are inaccessible to the peered VPC.",
+      "remediation_hint": "Update the aws_route_table resource to ensure routes are scoped to the minimum required CIDR blocks or hosts.",
+      "requirement_type": "networking",
+      "check_targets": [
+        "aws_route_table"
+      ],
+      "level": 2,
+      "severity": "high",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-9.2b",
+      "clause_text": "Ensure that only network ports, protocols, and services listening on a system with validated business needs, are running on each system.",
+      "rationale": "Limiting the number of open ports and services reduces the attack surface of the system, making it less vulnerable to unauthorized access and exploitation. This practice is essential for maintaining a secure network environment.",
+      "remediation_hint": "Use the 'aws_security_group' resource to define allowed ports and protocols.",
+      "requirement_type": "networking",
+      "check_targets": [
+        "aws_security_group"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-6.7",
+      "clause_text": "Ensure that the EC2 Metadata Service only allows IMDSv2",
+      "rationale": "Using IMDSv2 enhances security by protecting instance metadata access with session authentication, reducing the risk of SSRF attacks.",
+      "remediation_hint": "Set the 'metadata_options' attribute of the 'aws_instance' resource to require IMDSv2.",
+      "requirement_type": "access_control",
+      "check_targets": [
+        "aws_instance"
+      ],
+      "level": 1,
+      "severity": "high",
+      "automated": true
+    },
+    {
+      "clause_id": "CIS-6.8b",
+      "clause_text": "Ensure VPC Endpoints are used for access to AWS Services",
+      "rationale": "Accessing AWS services over the public internet increases exposure to network-level threats. Using VPC endpoints allows workloads to reach AWS services over the Amazon private network, reducing reliance on internet gateways.",
+      "remediation_hint": "Use 'aws_vpc_endpoint' resource to create VPC endpoints for AWS services.",
+      "requirement_type": "networking",
+      "check_targets": [
+        "aws_vpc_endpoint"
+      ],
+      "level": 2,
+      "severity": "medium",
+      "automated": false
+    },
+    {
+      "clause_id": "CIS-6.2b",
+      "clause_text": "Ensure no Network ACLs allow ingress from 0.0.0.0/0 to remote server administration ports",
+      "rationale": "Allowing unrestricted access to remote server administration ports can expose systems to unauthorized access and potential attacks. It is crucial to restrict access to only trusted IP addresses.",
+      "remediation_hint": "Modify the 'aws_network_acl' resource to restrict ingress rules.",
+      "requirement_type": "networking",
+      "check_targets": [
+        "aws_network_acl"
+      ],
+      "level": 2,
+      "severity": "medium",
+      "automated": false
+    }
+  ]
+}

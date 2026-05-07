@@ -1,0 +1,32 @@
+[
+  {
+    "model": "openai/gpt-4o",
+    "n_cases": 55,
+    "severity_accuracy": 0.509,
+    "req_type_accuracy": 0.909,
+    "avg_targets_f1": 0.781,
+    "avg_latency_s": 1.17,
+    "total_tokens_est": 5999,
+    "estimated_cost_usd": 0.03
+  },
+  {
+    "model": "anthropic/claude-3.5-sonnet-20241022",
+    "n_cases": 55,
+    "severity_accuracy": 0.0,
+    "req_type_accuracy": 0.0,
+    "avg_targets_f1": 0,
+    "avg_latency_s": 0,
+    "total_tokens_est": 0,
+    "estimated_cost_usd": 0.0
+  },
+  {
+    "model": "meta-llama/llama-3.1-70b-instruct",
+    "n_cases": 55,
+    "severity_accuracy": 0.509,
+    "req_type_accuracy": 0.909,
+    "avg_targets_f1": 0.795,
+    "avg_latency_s": 3.22,
+    "total_tokens_est": 6451,
+    "estimated_cost_usd": 0.0058
+  }
+]

@@ -19,17 +19,20 @@ Usage:
 """
 
 import sys, os, json, time
-sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)) + "/backend")
+from dotenv import load_dotenv
 
-os.environ.setdefault("OPENROUTER_API_KEY", os.environ.get("OPENROUTER_API_KEY", ""))
+# Load .env from the backend directory
+load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), "backend", ".env"))
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)) + "/backend")
 
 from agents.planner import PlannerAgent
 
 # Approximate cost per 1 000 tokens (input + output) in USD
 COST_PER_1K = {
-    "openai/gpt-4o":                       0.005,
-    "anthropic/claude-3.5-sonnet":         0.003,
-    "meta-llama/llama-3.1-70b-instruct":   0.0009,
+    # "openai/gpt-4o":                      0.005,
+    "deepseek/deepseek-chat":               0.00027,
+    # "meta-llama/llama-3.1-70b-instruct":  0.0009,
 }
 
 MODELS = list(COST_PER_1K.keys())
@@ -98,9 +101,15 @@ def evaluate_model(model: str, test_cases: list) -> dict:
         # Use the first extracted requirement for comparison
         pred = reqs[0]
 
-        sev_ok  = pred.severity.lower() == exp["severity"].lower()
-        rtyp_ok = pred.requirement_type.lower() == exp["requirement_type"].lower()
-        f1      = targets_f1(pred.check_targets, exp["check_targets"])
+        try:
+            sev_ok  = (pred.severity or "").lower() == exp["severity"].lower()
+            rtyp_ok = (pred.requirement_type or "").lower() == exp["requirement_type"].lower()
+            f1      = targets_f1(pred.check_targets or [], exp["check_targets"])
+        except Exception as e:
+            print(f"  [{tc_id}] ERROR parsing prediction: {e}")
+            per_case_results.append({"id": tc_id, "error": str(e)})
+            f1_scores.append(0.0)
+            continue
 
         severity_hits += int(sev_ok)
         req_type_hits += int(rtyp_ok)

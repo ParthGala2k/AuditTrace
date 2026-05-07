@@ -10,7 +10,7 @@ Receives the mapped findings from the Executor and:
 
 import os
 import sys
-from langchain.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate
 from typing import List, Dict, Any
 from .planner import ComplianceRequirement
 from .executor import Finding

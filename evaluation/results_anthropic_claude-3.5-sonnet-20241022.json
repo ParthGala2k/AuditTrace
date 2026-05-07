@@ -1,0 +1,234 @@
+{
+  "summary": {
+    "model": "anthropic/claude-3.5-sonnet-20241022",
+    "n_cases": 55,
+    "severity_accuracy": 0.0,
+    "req_type_accuracy": 0.0,
+    "avg_targets_f1": 0,
+    "avg_latency_s": 0,
+    "total_tokens_est": 0,
+    "estimated_cost_usd": 0.0
+  },
+  "per_case": [
+    {
+      "id": "tc-001",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-002",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-003",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-004",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-005",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-006",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-007",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-008",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-009",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-010",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-011",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-012",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-013",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-014",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-015",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-016",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-017",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-018",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-019",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-020",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-021",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-022",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-023",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-024",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-025",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-026",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-027",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-028",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-029",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-030",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-031",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-032",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-033",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-034",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-035",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-036",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-037",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-038",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-039",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-040",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-041",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-042",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-043",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-044",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-045",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-046",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-047",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-048",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-049",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-050",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-051",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-052",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-053",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-054",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    },
+    {
+      "id": "tc-055",
+      "error": "Error code: 404 - {'error': {'message': 'No endpoints found for anthropic/claude-3.5-sonnet-20241022.', 'code': 404}, 'user_id': 'user_3AzVn6RD4aafwSOWg0B1ABDQGhj'}"
+    }
+  ]
+}

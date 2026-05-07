@@ -1,99 +1,101 @@
 """
-AuditTrace — LangGraph Orchestration + FastAPI
-------------------------------------------------
-Pipeline: Planner → Executor → Critic
-The active LLM model is threaded through all nodes via AuditState,
-so the frontend can switch models per request.
+AuditTrace — FastAPI + LangGraph
+---------------------------------
+Audit flow:
+  POST /audit { repo_url, policy }
+    1. Load pre-distilled requirements from policies/<policy>.json
+    2. Clone repo, run Checkov once
+    3. 3-model consensus matching (3 batched LLM calls)
+    4. Save versioned result to SQLite
+    5. Return ranked violations with confidence scores
 """
 
 import os
-import shutil
-import tempfile
-from typing import TypedDict, List, Dict, Any, Optional
+import json
+from typing import List, Dict, Any, Optional
 
 from langgraph.graph import StateGraph, END
 from dotenv import load_dotenv
-from fastapi import FastAPI, UploadFile, File, Form
+from fastapi import FastAPI, Form, Query, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from agents import PlannerAgent, ExecutorAgent, CriticAgent, ComplianceRequirement
+from agents.planner import ComplianceRequirement
 from agents.executor import Finding
-from tools import extract_text, chunk_by_section, clone_repo
+from agents.consensus import run_consensus, MODELS as DEFAULT_MODELS
+from tools.checkov_runner import clone_repo, run_checkov
+import db
 
 load_dotenv()
+db.init_db()
+
+POLICIES_DIR = os.path.join(os.path.dirname(__file__), "..", "policies")
+
+
+def load_policy(name: str) -> List[ComplianceRequirement]:
+    """Load pre-distilled requirements from policies/<name>.json."""
+    path = os.path.join(POLICIES_DIR, f"{name}.json")
+    if not os.path.exists(path):
+        raise HTTPException(
+            status_code=404,
+            detail=f"Policy '{name}' not found. Run scripts/distill_policy.py first."
+        )
+    with open(path) as f:
+        data = json.load(f)
+    reqs = [ComplianceRequirement(**r) for r in data["requirements"]]
+    print(f"[main] loaded {len(reqs)} requirements from policy '{name}'")
+    return reqs
 
 
 # ---------------------------------------------------------------------------
-# Shared pipeline state
+# LangGraph state
 # ---------------------------------------------------------------------------
 
-class AuditState(TypedDict):
-    pdf_path: str
-    repo_url: str
-    model: Optional[str]          # OpenRouter model ID, None = use env default
-    policy_chunks: List[str]
-    requirements: List[ComplianceRequirement]
-    repo_local_path: str
-    findings_map: Dict[str, List[Finding]]
-    report: Dict[str, Any]
+class AuditState(dict):
+    pass
 
 
 # ---------------------------------------------------------------------------
 # Node functions
 # ---------------------------------------------------------------------------
 
-def plan_node(state: AuditState) -> AuditState:
-    """Planner: parse PDF → extract structured requirements."""
-    text = extract_text(state["pdf_path"])
-    chunks = chunk_by_section(text)
-    planner = PlannerAgent(model=state.get("model"))
-    requirements: List[ComplianceRequirement] = []
-    for chunk in chunks:
-        requirements.extend(planner.decompose(chunk))
-    return {**state, "policy_chunks": chunks, "requirements": requirements}
-
-
-def execute_node(state: AuditState) -> AuditState:
-    """Executor: clone repo → run Checkov → map findings to requirements."""
-    token = os.environ.get("GITHUB_TOKEN", "")
+def scan_node(state: dict) -> dict:
+    """Clone repo and run Checkov."""
+    token      = os.environ.get("GITHUB_TOKEN", "")
     local_path = clone_repo(state["repo_url"], token)
-    executor = ExecutorAgent(local_path)
-    findings_map = executor.execute(state["requirements"])
-    return {**state, "repo_local_path": local_path, "findings_map": findings_map}
+    findings   = [Finding(f) for f in run_checkov(local_path)]
+    print(f"[scan_node] {len(findings)} Checkov findings")
+    return {**state, "repo_local_path": local_path, "all_findings": findings}
 
 
-def critic_node(state: AuditState) -> AuditState:
-    """Critic: build compliance trace graph + generate fix suggestions."""
-    critic = CriticAgent(model=state.get("model"))
-    report = critic.generate_report(
-        state["requirements"],
-        state["findings_map"],
-        repo_local_path=state.get("repo_local_path", ""),
+async def consensus_node(state: dict) -> dict:
+    """Run 3-model consensus matching."""
+    report = await run_consensus(
+        requirements=state["requirements"],
+        all_findings=state["all_findings"],
+        models=state.get("models") or DEFAULT_MODELS,
     )
     return {**state, "report": report}
 
 
 # ---------------------------------------------------------------------------
-# Graph assembly
+# Graph
 # ---------------------------------------------------------------------------
 
 def build_graph() -> StateGraph:
-    graph = StateGraph(AuditState)
-    graph.add_node("planner", plan_node)
-    graph.add_node("executor", execute_node)
-    graph.add_node("critic", critic_node)
-    graph.set_entry_point("planner")
-    graph.add_edge("planner", "executor")
-    graph.add_edge("executor", "critic")
-    graph.add_edge("critic", END)
+    graph = StateGraph(dict)
+    graph.add_node("scan",      scan_node)
+    graph.add_node("consensus", consensus_node)
+    graph.set_entry_point("scan")
+    graph.add_edge("scan",      "consensus")
+    graph.add_edge("consensus", END)
     return graph.compile()
 
 
 # ---------------------------------------------------------------------------
-# FastAPI app
+# FastAPI
 # ---------------------------------------------------------------------------
 
-app = FastAPI(title="AuditTrace API", version="0.1.0")
+app = FastAPI(title="AuditTrace API", version="0.3.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -107,34 +109,73 @@ audit_graph = build_graph()
 
 @app.post("/audit")
 async def run_audit(
-    pdf: UploadFile = File(...),
-    repo_url: str = Form(...),
-    model: str = Form(default=None),
+    repo_url: str           = Form(...),
+    policy:   str           = Form(...),
+    models:   Optional[str] = Form(default=None),
 ):
     """
-    Run a full compliance audit.
+    Run a consensus compliance audit.
 
-    - **pdf**: Compliance policy PDF (SOC2, NIST, CIS Benchmark, etc.)
     - **repo_url**: GitHub repo URL containing infrastructure-as-code
-    - **model**: OpenRouter model ID (optional, defaults to LLM_MODEL env var)
+    - **policy**: Name of pre-distilled policy (e.g. 'cis_aws_v7')
+    - **models**: Comma-separated OpenRouter model IDs (optional)
     """
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
-        shutil.copyfileobj(pdf.file, tmp)
-        pdf_path = tmp.name
+    requirements = load_policy(policy)
 
-    initial_state: AuditState = {
-        "pdf_path": pdf_path,
-        "repo_url": repo_url,
-        "model": model or None,
-        "policy_chunks": [],
-        "requirements": [],
+    model_list = (
+        [m.strip() for m in models.split(",") if m.strip()]
+        if models else DEFAULT_MODELS
+    )
+
+    initial_state = {
+        "repo_url":        repo_url,
+        "policy":          policy,
+        "models":          model_list,
+        "requirements":    requirements,
+        "all_findings":    [],
         "repo_local_path": "",
-        "findings_map": {},
-        "report": {},
+        "report":          {},
     }
 
-    final_state = await audit_graph.ainvoke(initial_state)
-    return final_state["report"]
+    final_state  = await audit_graph.ainvoke(initial_state)
+    report       = final_state["report"]
+    version_info = db.save_audit(repo_url=repo_url, model=",".join(model_list), report=report)
+
+    return {**report, **version_info}
+
+
+@app.get("/policies")
+def list_policies():
+    """List all available distilled policy specs."""
+    os.makedirs(POLICIES_DIR, exist_ok=True)
+    result = []
+    for fname in os.listdir(POLICIES_DIR):
+        if not fname.endswith(".json"):
+            continue
+        with open(os.path.join(POLICIES_DIR, fname)) as f:
+            data = json.load(f)
+        result.append({
+            "name":              data.get("name"),
+            "source_pdf":        data.get("source_pdf"),
+            "model_used":        data.get("model_used"),
+            "requirement_count": data.get("requirement_count"),
+        })
+    return result
+
+
+@app.get("/history")
+def get_history(repo_url: str = Query(...)):
+    """Return all audit versions for a repo."""
+    return db.get_history(repo_url)
+
+
+@app.get("/history/report")
+def get_version_report(repo_url: str = Query(...), version: int = Query(...)):
+    """Return the full report for a specific audit version."""
+    report = db.get_audit_report(repo_url, version)
+    if report is None:
+        raise HTTPException(status_code=404, detail="Version not found")
+    return report
 
 
 @app.get("/health")

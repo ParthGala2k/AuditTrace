@@ -17,3 +17,13 @@ reports/
 *.pdf
 *.db
 backend/venv/
+backend/mapping_cache/
+
+# Office temp lock files
+~$*
+
+# Local audit outputs (regenerable; not deliverable artifacts)
+report.json
+
+# Older / unrelated decks kept locally
+HALTRAG.pptx

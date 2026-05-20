@@ -15,6 +15,7 @@ Thumbs.db
 uploads/
 reports/
 *.pdf
+!AuditTrace_Report.pdf
 *.db
 backend/venv/
 backend/mapping_cache/

@@ -97,3 +97,54 @@ def get_code_snippet(file_path: str, line_range: List[int], context: int = 3) ->
     return "".join(
         f"{i + start + 1}: {lines[i + start]}" for i in range(end - start)
     )
+
+
+_BLOCK_PREFIXES = ("resource ", "module ", "data ", "provider ", "variable ")
+
+
+def extract_resource_block(file_path: str, line_range: List[int], max_lines: int = 60) -> str:
+    """
+    Walk backwards from the violation line to find the enclosing
+    'resource ... {', 'module ... {', etc., then forward through balanced
+    braces to the matching '}'. Returns the block (line-numbered).
+
+    Falls back to a small windowed snippet if no block can be detected
+    (e.g. JSON/CloudFormation files).
+    """
+    if not file_path or not os.path.exists(file_path):
+        return ""
+    try:
+        with open(file_path, "r", errors="replace") as f:
+            lines = f.readlines()
+    except OSError:
+        return ""
+
+    target = max(0, (line_range[0] if line_range else 1) - 1)
+    target = min(target, len(lines) - 1)
+
+    start = target
+    while start > 0 and not lines[start].lstrip().startswith(_BLOCK_PREFIXES):
+        start -= 1
+
+    # No block declaration found → fall back to context window
+    if not lines[start].lstrip().startswith(_BLOCK_PREFIXES):
+        return get_code_snippet(file_path, line_range, context=5)
+
+    depth = 0
+    started = False
+    end = start
+    for i in range(start, min(len(lines), start + max_lines)):
+        for ch in lines[i]:
+            if ch == "{":
+                depth += 1
+                started = True
+            elif ch == "}":
+                depth -= 1
+                if started and depth == 0:
+                    end = i
+                    break
+        if started and depth == 0:
+            end = i
+            break
+
+    return "".join(f"{i+1}: {lines[i]}" for i in range(start, end + 1))

@@ -50,24 +50,35 @@ def _severity_weight(severity: str) -> float:
 def compute_compliance_score(report: dict) -> float:
     """
     Weighted compliance score 0–100.
-    Each failing clause is penalized proportional to its max violation severity.
+    Based on unique failing clauses vs total requirements, weighted by severity
+    and penalised more for high-confidence (multi-model) violations.
     """
     violations = report.get("violations", [])
-    summary = report.get("summary", {})
-    clauses_checked = summary.get("clauses_checked", 0)
-    if clauses_checked == 0:
+    summary    = report.get("summary", {})
+
+    # Total requirements: prefer explicit field, fall back to unique clause count
+    total = (
+        summary.get("total_requirements")
+        or summary.get("clauses_checked")
+        or len({v.get("clause_id") for v in violations if v.get("clause_id")})
+        or 1
+    )
+
+    if not violations:
         return 100.0
 
-    # Group violations by clause, take max severity weight per clause
-    clause_weights: dict[str, float] = {}
+    # Per-clause: max severity × confidence factor (high-consensus hurts more)
+    clause_penalty: dict = {}
     for v in violations:
-        cid = v.get("clause_id", "")
-        w = _severity_weight(v.get("severity", "low"))
-        clause_weights[cid] = max(clause_weights.get(cid, 0), w)
+        cid        = v.get("clause_id", "")
+        sev_w      = _severity_weight(v.get("severity", "low"))
+        confidence = v.get("consensus_score", 1) / 3.0  # 0.33 → 1.0
+        penalty    = sev_w * confidence
+        clause_penalty[cid] = max(clause_penalty.get(cid, 0), penalty)
 
-    max_possible = clauses_checked * 4.0  # all critical
-    penalty = sum(clause_weights.values())
-    score = max(0.0, (1 - penalty / max_possible) * 100)
+    max_possible = total * 4.0   # worst case: all clauses critical, all models agree
+    total_penalty = sum(clause_penalty.values())
+    score = max(0.0, (1 - total_penalty / max_possible) * 100)
     return round(score, 2)
 
 

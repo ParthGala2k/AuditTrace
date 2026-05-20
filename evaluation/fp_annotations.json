@@ -1,0 +1,305 @@
+{
+  "description": "Ground-truth dataset for FP-filter evaluation. Each entry is a (Checkov-style finding + HCL block) pair labeled GENUINE or FALSE_POSITIVE in context. GENUINE = real violation that should be flagged. FALSE_POSITIVE = check fires but the surrounding context (file path, comments, compensating controls, intent) makes it not actionable.",
+  "annotations": [
+    {
+      "id": "ann-001",
+      "label": "GENUINE",
+      "rationale": "Production customer-data bucket with ACL=public-read and no policy override.",
+      "check_id": "CKV_AWS_20",
+      "resource": "aws_s3_bucket.customer_records",
+      "file_path": "terraform/prod/data_buckets.tf",
+      "file_line_range": [12, 22],
+      "hcl_block": "12: resource \"aws_s3_bucket\" \"customer_records\" {\n13:   bucket = \"acme-prod-customer-records\"\n14:   acl    = \"public-read\"\n15: \n16:   tags = {\n17:     Environment = \"production\"\n18:     DataClass   = \"PII\"\n19:     Owner       = \"data-platform\"\n20:   }\n21: }"
+    },
+    {
+      "id": "ann-002",
+      "label": "FALSE_POSITIVE",
+      "rationale": "Bucket explicitly hosts a public marketing site; website configuration + comment confirm intent.",
+      "check_id": "CKV_AWS_20",
+      "resource": "aws_s3_bucket.marketing_site",
+      "file_path": "terraform/public_website/main.tf",
+      "file_line_range": [8, 28],
+      "hcl_block": "8:  # Public static site for marketing.acme.com\n9:  # ACL=public-read is required for direct browser fetches of /assets/*.\n10: resource \"aws_s3_bucket\" \"marketing_site\" {\n11:   bucket = \"acme-marketing-public-site\"\n12:   acl    = \"public-read\"\n13: \n14:   website {\n15:     index_document = \"index.html\"\n16:     error_document = \"404.html\"\n17:   }\n18: \n19:   tags = {\n20:     Environment = \"production\"\n21:     Purpose     = \"public-website\"\n22:   }\n23: }"
+    },
+    {
+      "id": "ann-003",
+      "label": "GENUINE",
+      "rationale": "Production data bucket with no SSE config; processes PII per tags.",
+      "check_id": "CKV_AWS_19",
+      "resource": "aws_s3_bucket.user_uploads",
+      "file_path": "terraform/prod/storage.tf",
+      "file_line_range": [4, 14],
+      "hcl_block": "4:  resource \"aws_s3_bucket\" \"user_uploads\" {\n5:    bucket = \"acme-prod-user-uploads\"\n6:    acl    = \"private\"\n7:  \n8:    tags = {\n9:      Environment = \"production\"\n10:     DataClass   = \"PII\"\n11:   }\n12: }"
+    },
+    {
+      "id": "ann-004",
+      "label": "FALSE_POSITIVE",
+      "rationale": "Encryption configured via separate aws_s3_bucket_server_side_encryption_configuration resource in same file.",
+      "check_id": "CKV_AWS_19",
+      "resource": "aws_s3_bucket.processed_data",
+      "file_path": "terraform/prod/processed_data.tf",
+      "file_line_range": [4, 26],
+      "hcl_block": "4:  resource \"aws_s3_bucket\" \"processed_data\" {\n5:    bucket = \"acme-prod-processed-data\"\n6:    acl    = \"private\"\n7:  }\n8:  \n9:  resource \"aws_s3_bucket_server_side_encryption_configuration\" \"processed_data\" {\n10:   bucket = aws_s3_bucket.processed_data.id\n11: \n12:   rule {\n13:     apply_server_side_encryption_by_default {\n14:       kms_master_key_id = aws_kms_key.s3_data.arn\n15:       sse_algorithm     = \"aws:kms\"\n16:     }\n17:     bucket_key_enabled = true\n18:   }\n19: }"
+    },
+    {
+      "id": "ann-005",
+      "label": "GENUINE",
+      "rationale": "Prod bastion security group permits SSH from anywhere on the internet.",
+      "check_id": "CKV_AWS_24",
+      "resource": "aws_security_group.bastion",
+      "file_path": "terraform/prod/network/bastion_sg.tf",
+      "file_line_range": [3, 18],
+      "hcl_block": "3:  resource \"aws_security_group\" \"bastion\" {\n4:    name        = \"prod-bastion\"\n5:    description = \"SSH access to production bastion host\"\n6:    vpc_id      = aws_vpc.prod.id\n7:  \n8:    ingress {\n9:      from_port   = 22\n10:     to_port     = 22\n11:     protocol    = \"tcp\"\n12:     cidr_blocks = [\"0.0.0.0/0\"]\n13:   }\n14: }"
+    },
+    {
+      "id": "ann-006",
+      "label": "FALSE_POSITIVE",
+      "rationale": "SSH ingress restricted to corporate VPN CIDR; 0.0.0.0/0 only on a default-deny egress rule.",
+      "check_id": "CKV_AWS_24",
+      "resource": "aws_security_group.corp_bastion",
+      "file_path": "terraform/prod/network/bastion_sg.tf",
+      "file_line_range": [3, 23],
+      "hcl_block": "3:  resource \"aws_security_group\" \"corp_bastion\" {\n4:    name        = \"prod-corp-bastion\"\n5:    description = \"SSH from corp VPN only\"\n6:    vpc_id      = aws_vpc.prod.id\n7:  \n8:    ingress {\n9:      from_port   = 22\n10:     to_port     = 22\n11:     protocol    = \"tcp\"\n12:     cidr_blocks = [\"10.50.0.0/16\"]\n13:   }\n14: \n15:   egress {\n16:     from_port   = 0\n17:     to_port     = 0\n18:     protocol    = \"-1\"\n19:     cidr_blocks = [\"0.0.0.0/0\"]\n20:   }\n21: }"
+    },
+    {
+      "id": "ann-007",
+      "label": "GENUINE",
+      "rationale": "Production database has publicly_accessible=true and no compensating SG restriction visible.",
+      "check_id": "CKV_AWS_17",
+      "resource": "aws_db_instance.orders_db",
+      "file_path": "terraform/prod/database.tf",
+      "file_line_range": [5, 22],
+      "hcl_block": "5:  resource \"aws_db_instance\" \"orders_db\" {\n6:    identifier        = \"acme-prod-orders\"\n7:    engine            = \"postgres\"\n8:    instance_class    = \"db.r5.xlarge\"\n9:    allocated_storage = 200\n10: \n11:   username = \"appuser\"\n12:   password = var.db_password\n13: \n14:   publicly_accessible = true\n15:   skip_final_snapshot = true\n16: \n17:   tags = {\n18:     Environment = \"production\"\n19:   }\n20: }"
+    },
+    {
+      "id": "ann-008",
+      "label": "FALSE_POSITIVE",
+      "rationale": "Test-only RDS in test fixtures directory; localhost-only SG attached; never reachable from internet despite the flag.",
+      "check_id": "CKV_AWS_17",
+      "resource": "aws_db_instance.unit_test_db",
+      "file_path": "tests/fixtures/postgres_test.tf",
+      "file_line_range": [3, 18],
+      "hcl_block": "3:  # Ephemeral test database for integration tests only.\n4:  # Deleted after CI run; SG below restricts to 127.0.0.1.\n5:  resource \"aws_db_instance\" \"unit_test_db\" {\n6:    identifier             = \"ci-test-${random_id.suffix.hex}\"\n7:    engine                 = \"postgres\"\n8:    instance_class         = \"db.t3.micro\"\n9:    allocated_storage      = 5\n10:   publicly_accessible    = true\n11:   skip_final_snapshot    = true\n12:   vpc_security_group_ids = [aws_security_group.localhost_only.id]\n13: }"
+    },
+    {
+      "id": "ann-009",
+      "label": "GENUINE",
+      "rationale": "Production RDS without storage_encrypted on PII data store.",
+      "check_id": "CKV_AWS_16",
+      "resource": "aws_db_instance.users",
+      "file_path": "terraform/prod/users_db.tf",
+      "file_line_range": [4, 16],
+      "hcl_block": "4:  resource \"aws_db_instance\" \"users\" {\n5:    identifier        = \"acme-prod-users\"\n6:    engine            = \"mysql\"\n7:    instance_class    = \"db.r5.large\"\n8:    allocated_storage = 100\n9:    storage_encrypted = false\n10: \n11:   tags = {\n12:     Environment = \"production\"\n13:     DataClass   = \"PII\"\n14:   }\n15: }"
+    },
+    {
+      "id": "ann-010",
+      "label": "FALSE_POSITIVE",
+      "rationale": "Throwaway demo DB used only for the workshop; comment + path + name make intent unambiguous.",
+      "check_id": "CKV_AWS_16",
+      "resource": "aws_db_instance.workshop_demo",
+      "file_path": "examples/workshop_2024/demo_db.tf",
+      "file_line_range": [3, 13],
+      "hcl_block": "3:  # 2024 internal workshop demo only - destroyed at end of session.\n4:  resource \"aws_db_instance\" \"workshop_demo\" {\n5:    identifier        = \"workshop-demo-throwaway\"\n6:    engine            = \"postgres\"\n7:    instance_class    = \"db.t3.micro\"\n8:    allocated_storage = 5\n9:    storage_encrypted = false\n10:   skip_final_snapshot = true\n11: }"
+    },
+    {
+      "id": "ann-011",
+      "label": "GENUINE",
+      "rationale": "Production EBS volume holding application data with encrypted=false.",
+      "check_id": "CKV_AWS_3",
+      "resource": "aws_ebs_volume.app_data",
+      "file_path": "terraform/prod/app_storage.tf",
+      "file_line_range": [3, 13],
+      "hcl_block": "3:  resource \"aws_ebs_volume\" \"app_data\" {\n4:    availability_zone = \"us-east-1a\"\n5:    size              = 500\n6:    type              = \"gp3\"\n7:    encrypted         = false\n8:  \n9:    tags = {\n10:     Environment = \"production\"\n11:     Purpose     = \"app-data\"\n12:   }\n13: }"
+    },
+    {
+      "id": "ann-012",
+      "label": "FALSE_POSITIVE",
+      "rationale": "Account-level default EBS encryption enforced via separate resource in same module; flag here is redundant.",
+      "check_id": "CKV_AWS_3",
+      "resource": "aws_ebs_volume.cache_scratch",
+      "file_path": "terraform/prod/cache_storage.tf",
+      "file_line_range": [3, 22],
+      "hcl_block": "3:  resource \"aws_ebs_encryption_by_default\" \"this\" {\n4:    enabled = true\n5:  }\n6:  \n7:  resource \"aws_ebs_default_kms_key\" \"this\" {\n8:    key_arn = aws_kms_key.ebs.arn\n9:  }\n10: \n11: # Account-level default forces encryption on this volume even though\n12: # encrypted=false is set explicitly (Checkov does not see the override).\n13: resource \"aws_ebs_volume\" \"cache_scratch\" {\n14:   availability_zone = \"us-east-1a\"\n15:   size              = 50\n16:   type              = \"gp3\"\n17:   encrypted         = false\n18: }"
+    },
+    {
+      "id": "ann-013",
+      "label": "GENUINE",
+      "rationale": "Lambda environment variable contains a real-looking API key literal.",
+      "check_id": "CKV_AWS_45",
+      "resource": "aws_lambda_function.billing",
+      "file_path": "terraform/prod/lambdas/billing.tf",
+      "file_line_range": [4, 18],
+      "hcl_block": "4:  resource \"aws_lambda_function\" \"billing\" {\n5:    function_name = \"acme-prod-billing\"\n6:    role          = aws_iam_role.billing.arn\n7:    handler       = \"index.handler\"\n8:    runtime       = \"nodejs18.x\"\n9:    filename      = \"billing.zip\"\n10: \n11:   environment {\n12:     variables = {\n13:       STRIPE_API_KEY = \"REDACTED_HARDCODED_LIVE_KEY_PLACEHOLDER\"\n14:       LOG_LEVEL      = \"info\"\n15:     }\n16:   }\n17: }"
+    },
+    {
+      "id": "ann-014",
+      "label": "FALSE_POSITIVE",
+      "rationale": "Env variables reference Secrets Manager ARN, not raw secrets; LOG_LEVEL is non-sensitive.",
+      "check_id": "CKV_AWS_45",
+      "resource": "aws_lambda_function.shipping",
+      "file_path": "terraform/prod/lambdas/shipping.tf",
+      "file_line_range": [4, 18],
+      "hcl_block": "4:  resource \"aws_lambda_function\" \"shipping\" {\n5:    function_name = \"acme-prod-shipping\"\n6:    role          = aws_iam_role.shipping.arn\n7:    handler       = \"index.handler\"\n8:    runtime       = \"nodejs18.x\"\n9:    filename      = \"shipping.zip\"\n10: \n11:   environment {\n12:     variables = {\n13:       FEDEX_API_SECRET_ARN = aws_secretsmanager_secret.fedex.arn\n14:       LOG_LEVEL            = \"info\"\n15:     }\n16:   }\n17: }"
+    },
+    {
+      "id": "ann-015",
+      "label": "GENUINE",
+      "rationale": "IAM password policy missing min length 14 and special chars on production account.",
+      "check_id": "CKV_AWS_15",
+      "resource": "aws_iam_account_password_policy.main",
+      "file_path": "terraform/prod/iam/password_policy.tf",
+      "file_line_range": [3, 12],
+      "hcl_block": "3:  resource \"aws_iam_account_password_policy\" \"main\" {\n4:    minimum_password_length      = 6\n5:    require_uppercase_characters = false\n6:    require_lowercase_characters = false\n7:    require_numbers              = false\n8:    require_symbols              = false\n9:    max_password_age             = 365\n10:   password_reuse_prevention    = 0\n11: }"
+    },
+    {
+      "id": "ann-016",
+      "label": "FALSE_POSITIVE",
+      "rationale": "Identity Center handles all human auth; this account-level policy is a fallback that only applies to break-glass root.",
+      "check_id": "CKV_AWS_15",
+      "resource": "aws_iam_account_password_policy.fallback",
+      "file_path": "terraform/identity/fallback_policy.tf",
+      "file_line_range": [3, 15],
+      "hcl_block": "3:  # Human users authenticate via AWS Identity Center (SSO) only.\n4:  # This account-level policy applies to the break-glass root user,\n5:  # which is hardware-MFA protected and used <1x/year.\n6:  resource \"aws_iam_account_password_policy\" \"fallback\" {\n7:    minimum_password_length      = 12\n8:    require_uppercase_characters = true\n9:    require_lowercase_characters = true\n10:   require_numbers              = true\n11:   require_symbols              = false\n12:   max_password_age             = 180\n13: }"
+    },
+    {
+      "id": "ann-017",
+      "label": "GENUINE",
+      "rationale": "IAM policy grants Action=* Resource=* attached to a human user (not a role).",
+      "check_id": "CKV_AWS_40",
+      "resource": "aws_iam_user_policy.engineer_admin",
+      "file_path": "terraform/iam/users/engineer.tf",
+      "file_line_range": [3, 19],
+      "hcl_block": "3:  resource \"aws_iam_user_policy\" \"engineer_admin\" {\n4:    name = \"engineer-admin\"\n5:    user = aws_iam_user.alice.name\n6:  \n7:    policy = jsonencode({\n8:      Version = \"2012-10-17\"\n9:      Statement = [{\n10:       Effect   = \"Allow\"\n11:       Action   = \"*\"\n12:       Resource = \"*\"\n13:     }]\n14:   })\n15: }"
+    },
+    {
+      "id": "ann-018",
+      "label": "FALSE_POSITIVE",
+      "rationale": "Action=* attached to a role that only the deployment pipeline can assume, with external_id and time-bound trust.",
+      "check_id": "CKV_AWS_40",
+      "resource": "aws_iam_role_policy.deployer",
+      "file_path": "terraform/iam/roles/deployer.tf",
+      "file_line_range": [3, 26],
+      "hcl_block": "3:  # Used only by the CI deployment pipeline.\n4:  # Trust policy restricts to GitHub OIDC + branch=main + repo=acme/infra.\n5:  resource \"aws_iam_role_policy\" \"deployer\" {\n6:    name = \"deployer-broad-access\"\n7:    role = aws_iam_role.ci_deployer.id\n8:  \n9:    policy = jsonencode({\n10:     Version = \"2012-10-17\"\n11:     Statement = [{\n12:       Effect   = \"Allow\"\n13:       Action   = \"*\"\n14:       Resource = \"*\"\n15:       Condition = {\n16:         StringEquals = {\n17:           \"aws:RequestedRegion\" = [\"us-east-1\", \"us-west-2\"]\n18:         }\n19:       }\n20:     }]\n21:   })\n22: }"
+    },
+    {
+      "id": "ann-019",
+      "label": "GENUINE",
+      "rationale": "CloudTrail trail with log_file_validation disabled in production audit account.",
+      "check_id": "CKV_AWS_36",
+      "resource": "aws_cloudtrail.audit",
+      "file_path": "terraform/audit/cloudtrail.tf",
+      "file_line_range": [3, 14],
+      "hcl_block": "3:  resource \"aws_cloudtrail\" \"audit\" {\n4:    name                          = \"acme-prod-audit-trail\"\n5:    s3_bucket_name                = aws_s3_bucket.audit_logs.id\n6:    include_global_service_events = true\n7:    is_multi_region_trail         = true\n8:    enable_log_file_validation    = false\n9:  \n10:   tags = {\n11:     Environment = \"production\"\n12:   }\n13: }"
+    },
+    {
+      "id": "ann-020",
+      "label": "FALSE_POSITIVE",
+      "rationale": "Local-only trail used by SOC tabletop exercise; not authoritative audit source.",
+      "check_id": "CKV_AWS_36",
+      "resource": "aws_cloudtrail.tabletop",
+      "file_path": "exercises/soc_tabletop_2024/cloudtrail.tf",
+      "file_line_range": [3, 12],
+      "hcl_block": "3:  # SOC tabletop exercise sandbox - destroyed after the drill.\n4:  resource \"aws_cloudtrail\" \"tabletop\" {\n5:    name                          = \"soc-tabletop-${random_id.suffix.hex}\"\n6:    s3_bucket_name                = aws_s3_bucket.tabletop_logs.id\n7:    include_global_service_events = false\n8:    is_multi_region_trail         = false\n9:    enable_log_file_validation    = false\n10: }"
+    },
+    {
+      "id": "ann-021",
+      "label": "GENUINE",
+      "rationale": "Production S3 bucket has no versioning; data loss risk on overwrite/delete.",
+      "check_id": "CKV_AWS_21",
+      "resource": "aws_s3_bucket.invoices",
+      "file_path": "terraform/prod/finance/invoices.tf",
+      "file_line_range": [3, 12],
+      "hcl_block": "3:  resource \"aws_s3_bucket\" \"invoices\" {\n4:    bucket = \"acme-prod-invoices\"\n5:    acl    = \"private\"\n6:  \n7:    tags = {\n8:      Environment = \"production\"\n9:      DataClass   = \"financial\"\n10:   }\n11: }"
+    },
+    {
+      "id": "ann-022",
+      "label": "FALSE_POSITIVE",
+      "rationale": "CI build artifact bucket - objects are immutable per-build IDs; versioning would just add cost.",
+      "check_id": "CKV_AWS_21",
+      "resource": "aws_s3_bucket.build_artifacts",
+      "file_path": "terraform/ci/artifact_storage.tf",
+      "file_line_range": [3, 16],
+      "hcl_block": "3:  # Each object key includes the immutable build SHA; no two writes\n4:  # ever target the same key, so versioning provides no benefit.\n5:  # Lifecycle deletes objects after 90 days.\n6:  resource \"aws_s3_bucket\" \"build_artifacts\" {\n7:    bucket = \"acme-ci-build-artifacts\"\n8:    acl    = \"private\"\n9:  \n10:   lifecycle_rule {\n11:     enabled = true\n12:     expiration {\n13:       days = 90\n14:     }\n15:   }\n16: }"
+    },
+    {
+      "id": "ann-023",
+      "label": "GENUINE",
+      "rationale": "Production CloudWatch log group with no kms_key_id - logs may contain PII.",
+      "check_id": "CKV_AWS_158",
+      "resource": "aws_cloudwatch_log_group.api_logs",
+      "file_path": "terraform/prod/logging/api.tf",
+      "file_line_range": [3, 11],
+      "hcl_block": "3:  resource \"aws_cloudwatch_log_group\" \"api_logs\" {\n4:    name              = \"/aws/lambda/acme-prod-api\"\n5:    retention_in_days = 90\n6:  \n7:    tags = {\n8:      Environment = \"production\"\n9:      Contains    = \"customer-requests\"\n10:   }\n11: }"
+    },
+    {
+      "id": "ann-024",
+      "label": "FALSE_POSITIVE",
+      "rationale": "Dev-only access-log group; retention 7 days; documented as non-sensitive.",
+      "check_id": "CKV_AWS_158",
+      "resource": "aws_cloudwatch_log_group.dev_access",
+      "file_path": "terraform/dev/logging/access.tf",
+      "file_line_range": [3, 13],
+      "hcl_block": "3:  # Dev account access logs. No customer data per logging policy.\n4:  # Retention is 7 days; KMS key would be cost without benefit here.\n5:  resource \"aws_cloudwatch_log_group\" \"dev_access\" {\n6:    name              = \"/aws/dev/access\"\n7:    retention_in_days = 7\n8:  \n9:    tags = {\n10:     Environment = \"dev\"\n11:     Contains    = \"none-sensitive\"\n12:   }\n13: }"
+    },
+    {
+      "id": "ann-025",
+      "label": "GENUINE",
+      "rationale": "Production S3 bucket missing access logging - audit trail gap.",
+      "check_id": "CKV_AWS_18",
+      "resource": "aws_s3_bucket.audit_target",
+      "file_path": "terraform/prod/audit/target.tf",
+      "file_line_range": [3, 12],
+      "hcl_block": "3:  resource \"aws_s3_bucket\" \"audit_target\" {\n4:    bucket = \"acme-prod-audit-target\"\n5:    acl    = \"private\"\n6:  \n7:    tags = {\n8:      Environment = \"production\"\n9:      Purpose     = \"audit\"\n10:   }\n11: }"
+    },
+    {
+      "id": "ann-026",
+      "label": "FALSE_POSITIVE",
+      "rationale": "Bucket is itself the access-log destination; logging it would create a recursive log loop.",
+      "check_id": "CKV_AWS_18",
+      "resource": "aws_s3_bucket.access_logs",
+      "file_path": "terraform/prod/logging/access_log_bucket.tf",
+      "file_line_range": [3, 14],
+      "hcl_block": "3:  # This bucket IS the access-log target for every other bucket in the\n4:  # account. Enabling logging on it would create a recursive write loop.\n5:  resource \"aws_s3_bucket\" \"access_logs\" {\n6:    bucket = \"acme-prod-s3-access-logs\"\n7:    acl    = \"log-delivery-write\"\n8:  \n9:    lifecycle_rule {\n10:     enabled = true\n11:     expiration { days = 365 }\n12:   }\n13: }"
+    },
+    {
+      "id": "ann-027",
+      "label": "GENUINE",
+      "rationale": "Public access block missing from production sensitive-data bucket.",
+      "check_id": "CKV_AWS_57",
+      "resource": "aws_s3_bucket.medical_records",
+      "file_path": "terraform/prod/health/medical_records.tf",
+      "file_line_range": [3, 12],
+      "hcl_block": "3:  resource \"aws_s3_bucket\" \"medical_records\" {\n4:    bucket = \"acme-prod-medical-records\"\n5:    acl    = \"private\"\n6:  \n7:    tags = {\n8:      Environment = \"production\"\n9:      DataClass   = \"PHI\"\n10:   }\n11: }"
+    },
+    {
+      "id": "ann-028",
+      "label": "FALSE_POSITIVE",
+      "rationale": "Public access block configured via separate aws_s3_bucket_public_access_block resource immediately below the bucket.",
+      "check_id": "CKV_AWS_57",
+      "resource": "aws_s3_bucket.partner_uploads",
+      "file_path": "terraform/prod/partners/uploads.tf",
+      "file_line_range": [3, 20],
+      "hcl_block": "3:  resource \"aws_s3_bucket\" \"partner_uploads\" {\n4:    bucket = \"acme-prod-partner-uploads\"\n5:    acl    = \"private\"\n6:  }\n7:  \n8:  resource \"aws_s3_bucket_public_access_block\" \"partner_uploads\" {\n9:    bucket = aws_s3_bucket.partner_uploads.id\n10: \n11:   block_public_acls       = true\n12:   block_public_policy     = true\n13:   ignore_public_acls      = true\n14:   restrict_public_buckets = true\n15: }"
+    },
+    {
+      "id": "ann-029",
+      "label": "GENUINE",
+      "rationale": "Production KMS key without rotation enabled and used for customer data encryption.",
+      "check_id": "CKV_AWS_7",
+      "resource": "aws_kms_key.customer_data",
+      "file_path": "terraform/prod/kms/customer_data.tf",
+      "file_line_range": [3, 13],
+      "hcl_block": "3:  resource \"aws_kms_key\" \"customer_data\" {\n4:    description             = \"Encryption key for customer data buckets\"\n5:    deletion_window_in_days = 30\n6:    enable_key_rotation     = false\n7:  \n8:    tags = {\n9:      Environment = \"production\"\n10:     DataClass   = \"PII\"\n11:   }\n12: }"
+    },
+    {
+      "id": "ann-030",
+      "label": "FALSE_POSITIVE",
+      "rationale": "Imported BYOK key material managed externally; AWS-side rotation is not applicable (and would be ignored).",
+      "check_id": "CKV_AWS_7",
+      "resource": "aws_kms_key.byok_external",
+      "file_path": "terraform/prod/kms/byok.tf",
+      "file_line_range": [3, 14],
+      "hcl_block": "3:  # BYOK key - material is generated in our HSM and imported via\n4:  # aws_kms_external_key. AWS-side rotation does not apply to imported\n5:  # key material; rotation is handled by the HSM lifecycle.\n6:  resource \"aws_kms_key\" \"byok_external\" {\n7:    description             = \"BYOK key with externally managed material\"\n8:    deletion_window_in_days = 30\n9:    enable_key_rotation     = false\n10:   customer_master_key_spec = \"SYMMETRIC_DEFAULT\"\n11:   key_usage                = \"ENCRYPT_DECRYPT\"\n12: }"
+    }
+  ]
+}

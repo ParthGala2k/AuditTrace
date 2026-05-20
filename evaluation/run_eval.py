@@ -30,9 +30,9 @@ from agents.planner import PlannerAgent
 
 # Approximate cost per 1 000 tokens (input + output) in USD
 COST_PER_1K = {
-    # "openai/gpt-4o":                      0.005,
-    "deepseek/deepseek-chat":               0.00027,
-    # "meta-llama/llama-3.1-70b-instruct":  0.0009,
+    "openai/gpt-4o-mini":                  0.000375,
+    "deepseek/deepseek-chat":              0.00027,
+    "meta-llama/llama-3.1-70b-instruct":  0.0009,
 }
 
 MODELS = list(COST_PER_1K.keys())

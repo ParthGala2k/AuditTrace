@@ -1,23 +1,22 @@
 {
   "summary": {
-    "model": "meta-llama/llama-3.1-70b-instruct",
+    "model": "deepseek/deepseek-chat",
     "n_cases": 55,
-    "severity_accuracy": 0.509,
+    "severity_accuracy": 0.382,
     "req_type_accuracy": 0.909,
-    "avg_targets_f1": 0.792,
-    "avg_latency_s": 3.04,
-    "total_tokens_est": 6381,
-    "estimated_cost_usd": 0.0057
+    "avg_targets_f1": 0.809,
+    "avg_latency_s": 7.15,
+    "total_tokens_est": 6548,
+    "estimated_cost_usd": 0.0018
   },
   "per_case": [
     {
       "id": "tc-001",
       "predicted": {
         "clause_id": "CIS-1.4",
-        "clause_text": "Ensure that access keys are rotated every 90 days or less.",
-        "requirement_type": "access_control",
+        "clause_text": "Ensure that access keys are rotated every 90 days or less. Access keys consist of an access key ID and secret access key, which are used to sign programmatic requests that you make to AWS. AWS users need their own access keys to make programmatic calls to AWS. It is recommended that all access keys be regularly rotated.",
+        "requirement_type": "secrets_management",
         "check_targets": [
-          "aws_iam_user",
           "aws_iam_access_key"
         ],
         "severity": "high"
@@ -32,9 +31,9 @@
         "severity": "medium"
       },
       "severity_ok": false,
-      "req_type_ok": true,
-      "targets_f1": 1.0,
-      "latency_s": 2.68
+      "req_type_ok": false,
+      "targets_f1": 0.667,
+      "latency_s": 6.26
     },
     {
       "id": "tc-002",
@@ -58,7 +57,7 @@
       "severity_ok": true,
       "req_type_ok": true,
       "targets_f1": 1.0,
-      "latency_s": 2.27
+      "latency_s": 8.87
     },
     {
       "id": "tc-003",
@@ -82,18 +81,18 @@
       "severity_ok": true,
       "req_type_ok": true,
       "targets_f1": 1.0,
-      "latency_s": 2.53
+      "latency_s": 7.62
     },
     {
       "id": "tc-004",
       "predicted": {
-        "clause_id": "CIS-1.7",
-        "clause_text": "Ensure IAM password policy requires at least one symbol.",
+        "clause_id": "IAM-1.7",
+        "clause_text": "Ensure IAM password policy requires at least one symbol. Use IAM password policies to ensure that passwords include specific character types including symbols such as !, @, #, $.",
         "requirement_type": "access_control",
         "check_targets": [
           "aws_iam_account_password_policy"
         ],
-        "severity": "medium"
+        "severity": "high"
       },
       "expected": {
         "clause_id": "CIS-1.7",
@@ -103,16 +102,16 @@
         ],
         "severity": "medium"
       },
-      "severity_ok": true,
+      "severity_ok": false,
       "req_type_ok": true,
       "targets_f1": 1.0,
-      "latency_s": 2.3
+      "latency_s": 15.4
     },
     {
       "id": "tc-005",
       "predicted": {
         "clause_id": "CIS-1.8",
-        "clause_text": "Ensure IAM password policy requires at least one number. Use IAM password policies to ensure that passwords include numeric characters.",
+        "clause_text": "Ensure IAM password policy requires at least one number.",
         "requirement_type": "access_control",
         "check_targets": [
           "aws_iam_account_password_policy"
@@ -130,13 +129,13 @@
       "severity_ok": true,
       "req_type_ok": true,
       "targets_f1": 1.0,
-      "latency_s": 3.31
+      "latency_s": 7.13
     },
     {
       "id": "tc-006",
       "predicted": {
         "clause_id": "CIS-1.9",
-        "clause_text": "Ensure IAM password policy requires minimum length of 14 or greater. Password policies enforce password complexity requirements. It is recommended that the password policy require a minimum password length of 14 characters.",
+        "clause_text": "Ensure IAM password policy requires minimum length of 14 or greater.",
         "requirement_type": "access_control",
         "check_targets": [
           "aws_iam_account_password_policy"
@@ -154,18 +153,18 @@
       "severity_ok": false,
       "req_type_ok": true,
       "targets_f1": 1.0,
-      "latency_s": 2.97
+      "latency_s": 6.9
     },
     {
       "id": "tc-007",
       "predicted": {
-        "clause_id": "IAM-1.10",
+        "clause_id": "CIS-1.10",
         "clause_text": "Ensure IAM password policy prevents password reuse. IAM password policies can prevent the reuse of a given password by the same user. It is recommended that the password policy prevent the reuse of passwords.",
         "requirement_type": "access_control",
         "check_targets": [
           "aws_iam_account_password_policy"
         ],
-        "severity": "medium"
+        "severity": "high"
       },
       "expected": {
         "clause_id": "CIS-1.10",
@@ -178,20 +177,21 @@
       "severity_ok": false,
       "req_type_ok": true,
       "targets_f1": 1.0,
-      "latency_s": 4.29
+      "latency_s": 5.14
     },
     {
       "id": "tc-008",
       "predicted": {
-        "clause_id": "IAM-1.16",
+        "clause_id": "CIS-1.16",
         "clause_text": "Ensure IAM policies that allow full '*:*' administrative privileges are not attached.",
         "requirement_type": "access_control",
         "check_targets": [
           "aws_iam_policy",
-          "aws_iam_role",
-          "aws_iam_user"
+          "aws_iam_role_policy",
+          "aws_iam_user_policy",
+          "aws_iam_group_policy"
         ],
-        "severity": "high"
+        "severity": "critical"
       },
       "expected": {
         "clause_id": "CIS-1.16",
@@ -203,21 +203,21 @@
         ],
         "severity": "critical"
       },
-      "severity_ok": false,
+      "severity_ok": true,
       "req_type_ok": true,
-      "targets_f1": 0.333,
-      "latency_s": 2.83
+      "targets_f1": 0.857,
+      "latency_s": 8.83
     },
     {
       "id": "tc-009",
       "predicted": {
-        "clause_id": "2.1.1",
+        "clause_id": "CIS-2.1.1",
         "clause_text": "Ensure S3 Bucket does not allow public access via ACLs.",
         "requirement_type": "access_control",
         "check_targets": [
           "aws_s3_bucket"
         ],
-        "severity": "high"
+        "severity": "critical"
       },
       "expected": {
         "clause_id": "CIS-2.1.1",
@@ -228,21 +228,22 @@
         ],
         "severity": "high"
       },
-      "severity_ok": true,
+      "severity_ok": false,
       "req_type_ok": true,
       "targets_f1": 0.667,
-      "latency_s": 2.56
+      "latency_s": 5.52
     },
     {
       "id": "tc-010",
       "predicted": {
-        "clause_id": "2.1.2",
-        "clause_text": "Ensure S3 Bucket does not allow public access via bucket policy.",
+        "clause_id": "CIS-2.1.2",
+        "clause_text": "Ensure S3 Bucket does not allow public access via bucket policy. This control checks that your Amazon S3 bucket is not publicly accessible by evaluating the bucket policy for public access.",
         "requirement_type": "access_control",
         "check_targets": [
-          "aws_s3_bucket"
+          "aws_s3_bucket",
+          "aws_s3_bucket_policy"
         ],
-        "severity": "high"
+        "severity": "critical"
       },
       "expected": {
         "clause_id": "CIS-2.1.2",
@@ -253,21 +254,21 @@
         ],
         "severity": "high"
       },
-      "severity_ok": true,
+      "severity_ok": false,
       "req_type_ok": true,
-      "targets_f1": 0.667,
-      "latency_s": 2.66
+      "targets_f1": 1.0,
+      "latency_s": 5.16
     },
     {
       "id": "tc-011",
       "predicted": {
-        "clause_id": "2.1.5",
-        "clause_text": "Ensure that S3 Buckets are configured with 'Block public access (bucket settings)'",
+        "clause_id": "CIS-2.1.5",
+        "clause_text": "Ensure that S3 Buckets are configured with 'Block public access (bucket settings)'.",
         "requirement_type": "access_control",
         "check_targets": [
           "aws_s3_bucket"
         ],
-        "severity": "high"
+        "severity": "critical"
       },
       "expected": {
         "clause_id": "CIS-2.1.5",
@@ -278,15 +279,15 @@
         ],
         "severity": "high"
       },
-      "severity_ok": true,
+      "severity_ok": false,
       "req_type_ok": true,
       "targets_f1": 0.667,
-      "latency_s": 2.54
+      "latency_s": 5.36
     },
     {
       "id": "tc-012",
       "predicted": {
-        "clause_id": "2.2.1",
+        "clause_id": "CIS-2.2.1",
         "clause_text": "Ensure EBS volume encryption is enabled in all regions.",
         "requirement_type": "encryption",
         "check_targets": [
@@ -306,13 +307,13 @@
       "severity_ok": true,
       "req_type_ok": true,
       "targets_f1": 0.667,
-      "latency_s": 3.01
+      "latency_s": 5.01
     },
     {
       "id": "tc-013",
       "predicted": {
         "clause_id": "CIS-2.3.1",
-        "clause_text": "Ensure that encryption is enabled for RDS Instances.",
+        "clause_text": "Ensure that encryption is enabled for RDS Instances. Amazon RDS encrypted DB instances use the industry standard AES-256 encryption algorithm to encrypt your data on the server that hosts your Amazon RDS DB instances.",
         "requirement_type": "encryption",
         "check_targets": [
           "aws_db_instance"
@@ -331,13 +332,13 @@
       "severity_ok": true,
       "req_type_ok": true,
       "targets_f1": 0.667,
-      "latency_s": 2.44
+      "latency_s": 5.96
     },
     {
       "id": "tc-014",
       "predicted": {
         "clause_id": "CIS-2.3.2",
-        "clause_text": "Ensure Auto Minor Version Upgrade feature is Enabled for RDS Instances. Ensure that RDS database instances have the Auto Minor Version Upgrade flag enabled in order to receive automatically minor engine upgrades during the specified maintenance window.",
+        "clause_text": "Ensure Auto Minor Version Upgrade feature is Enabled for RDS Instances.",
         "requirement_type": "patching",
         "check_targets": [
           "aws_db_instance"
@@ -355,18 +356,18 @@
       "severity_ok": true,
       "req_type_ok": true,
       "targets_f1": 1.0,
-      "latency_s": 4.4
+      "latency_s": 5.31
     },
     {
       "id": "tc-015",
       "predicted": {
-        "clause_id": "2.3.3",
+        "clause_id": "CIS-2.3.3",
         "clause_text": "Ensure that public access is not given to RDS Instance. Ensure and verify that RDS database instances provisioned in your AWS account do restrict unauthorized access in order to minimize security risks.",
         "requirement_type": "access_control",
         "check_targets": [
           "aws_db_instance"
         ],
-        "severity": "high"
+        "severity": "critical"
       },
       "expected": {
         "clause_id": "CIS-2.3.3",
@@ -377,10 +378,10 @@
         ],
         "severity": "high"
       },
-      "severity_ok": true,
+      "severity_ok": false,
       "req_type_ok": false,
       "targets_f1": 0.667,
-      "latency_s": 1.18
+      "latency_s": 11.03
     },
     {
       "id": "tc-016",
@@ -391,7 +392,7 @@
         "check_targets": [
           "aws_cloudtrail"
         ],
-        "severity": "high"
+        "severity": "critical"
       },
       "expected": {
         "clause_id": "CIS-3.1",
@@ -401,16 +402,16 @@
         ],
         "severity": "high"
       },
-      "severity_ok": true,
+      "severity_ok": false,
       "req_type_ok": true,
       "targets_f1": 1.0,
-      "latency_s": 2.13
+      "latency_s": 11.62
     },
     {
       "id": "tc-017",
       "predicted": {
         "clause_id": "CIS-3.2",
-        "clause_text": "Ensure CloudTrail log file validation is enabled.",
+        "clause_text": "Ensure CloudTrail log file validation is enabled. CloudTrail log file validation creates a digitally signed digest file containing a hash of each log that CloudTrail writes to S3. You can use these digest files to determine whether a log file was modified, deleted, or unchanged after CloudTrail delivered the log.",
         "requirement_type": "logging",
         "check_targets": [
           "aws_cloudtrail"
@@ -428,7 +429,7 @@
       "severity_ok": false,
       "req_type_ok": true,
       "targets_f1": 1.0,
-      "latency_s": 0.9
+      "latency_s": 9.59
     },
     {
       "id": "tc-018",
@@ -437,10 +438,9 @@
         "clause_text": "Ensure the S3 bucket used to store CloudTrail logs is not publicly accessible.",
         "requirement_type": "access_control",
         "check_targets": [
-          "aws_s3_bucket",
-          "aws_s3_bucket_policy"
+          "aws_s3_bucket"
         ],
-        "severity": "high"
+        "severity": "critical"
       },
       "expected": {
         "clause_id": "CIS-3.3",
@@ -451,10 +451,10 @@
         ],
         "severity": "high"
       },
-      "severity_ok": true,
+      "severity_ok": false,
       "req_type_ok": true,
-      "targets_f1": 0.5,
-      "latency_s": 3.54
+      "targets_f1": 0.667,
+      "latency_s": 10.54
     },
     {
       "id": "tc-019",
@@ -463,8 +463,7 @@
         "clause_text": "Ensure CloudTrail trails are integrated with CloudWatch Logs.",
         "requirement_type": "logging",
         "check_targets": [
-          "aws_cloudtrail",
-          "aws_cloudwatch_log_group"
+          "aws_cloudtrail"
         ],
         "severity": "high"
       },
@@ -479,8 +478,8 @@
       },
       "severity_ok": false,
       "req_type_ok": false,
-      "targets_f1": 1.0,
-      "latency_s": 2.65
+      "targets_f1": 0.667,
+      "latency_s": 9.46
     },
     {
       "id": "tc-020",
@@ -505,7 +504,7 @@
       "severity_ok": false,
       "req_type_ok": true,
       "targets_f1": 0.667,
-      "latency_s": 2.32
+      "latency_s": 14.4
     },
     {
       "id": "tc-021",
@@ -529,7 +528,7 @@
       "severity_ok": false,
       "req_type_ok": true,
       "targets_f1": 1.0,
-      "latency_s": 0.99
+      "latency_s": 4.65
     },
     {
       "id": "tc-022",
@@ -538,8 +537,7 @@
         "clause_text": "Ensure CloudTrail logs are encrypted at rest using KMS CMKs.",
         "requirement_type": "encryption",
         "check_targets": [
-          "aws_cloudtrail",
-          "aws_kms_key"
+          "aws_cloudtrail"
         ],
         "severity": "high"
       },
@@ -554,8 +552,8 @@
       },
       "severity_ok": false,
       "req_type_ok": true,
-      "targets_f1": 1.0,
-      "latency_s": 2.14
+      "targets_f1": 0.667,
+      "latency_s": 4.27
     },
     {
       "id": "tc-023",
@@ -566,7 +564,7 @@
         "check_targets": [
           "aws_security_group"
         ],
-        "severity": "high"
+        "severity": "critical"
       },
       "expected": {
         "clause_id": "CIS-4.1",
@@ -577,21 +575,22 @@
         ],
         "severity": "critical"
       },
-      "severity_ok": false,
+      "severity_ok": true,
       "req_type_ok": true,
       "targets_f1": 0.667,
-      "latency_s": 2.21
+      "latency_s": 7.61
     },
     {
       "id": "tc-024",
       "predicted": {
-        "clause_id": "4.2",
+        "clause_id": "CIS-4.2",
         "clause_text": "Ensure no security groups allow ingress from 0.0.0.0/0 to port 3389.",
         "requirement_type": "networking",
         "check_targets": [
-          "aws_security_group"
+          "aws_security_group",
+          "aws_security_group_rule"
         ],
-        "severity": "high"
+        "severity": "critical"
       },
       "expected": {
         "clause_id": "CIS-4.2",
@@ -602,10 +601,10 @@
         ],
         "severity": "critical"
       },
-      "severity_ok": false,
+      "severity_ok": true,
       "req_type_ok": true,
-      "targets_f1": 0.667,
-      "latency_s": 3.15
+      "targets_f1": 1.0,
+      "latency_s": 13.22
     },
     {
       "id": "tc-025",
@@ -614,8 +613,7 @@
         "clause_text": "Ensure the default security group of every VPC restricts all traffic.",
         "requirement_type": "networking",
         "check_targets": [
-          "aws_security_group",
-          "aws_vpc"
+          "aws_default_security_group"
         ],
         "severity": "high"
       },
@@ -630,8 +628,8 @@
       },
       "severity_ok": false,
       "req_type_ok": true,
-      "targets_f1": 0.5,
-      "latency_s": 3.01
+      "targets_f1": 0.667,
+      "latency_s": 5.42
     },
     {
       "id": "tc-026",
@@ -640,10 +638,10 @@
         "clause_text": "Ensure routing tables for VPC peering are least access. Once a VPC peering connection is established, routing tables must be updated to establish any connections between the peered VPCs. These routes can be as specific as desired \u00e2\u20ac\u201d even peering a VPC to only a single host on the other side of the connection.",
         "requirement_type": "networking",
         "check_targets": [
-          "aws_vpc_peering_connection",
-          "aws_route_table"
+          "aws_route_table",
+          "aws_vpc_peering_connection"
         ],
-        "severity": "medium"
+        "severity": "high"
       },
       "expected": {
         "clause_id": "CIS-4.4",
@@ -654,10 +652,10 @@
         ],
         "severity": "medium"
       },
-      "severity_ok": true,
+      "severity_ok": false,
       "req_type_ok": true,
       "targets_f1": 1.0,
-      "latency_s": 4.06
+      "latency_s": 8.02
     },
     {
       "id": "tc-027",
@@ -668,7 +666,7 @@
         "check_targets": [
           "aws_network_acl"
         ],
-        "severity": "high"
+        "severity": "critical"
       },
       "expected": {
         "clause_id": "CIS-5.1",
@@ -679,21 +677,21 @@
         ],
         "severity": "high"
       },
-      "severity_ok": true,
+      "severity_ok": false,
       "req_type_ok": true,
       "targets_f1": 0.667,
-      "latency_s": 2.86
+      "latency_s": 5.38
     },
     {
       "id": "tc-028",
       "predicted": {
-        "clause_id": "ENCRYPTION-1",
-        "clause_text": "All data at rest must be encrypted using AES-256 or stronger encryption.",
+        "clause_id": "ENC-1",
+        "clause_text": "All data at rest must be encrypted using AES-256 or stronger encryption. This applies to all storage services including S3 buckets, EBS volumes, RDS databases, and DynamoDB tables.",
         "requirement_type": "encryption",
         "check_targets": [
           "aws_s3_bucket",
           "aws_ebs_volume",
-          "aws_rds_instance",
+          "aws_db_instance",
           "aws_dynamodb_table"
         ],
         "severity": "critical"
@@ -711,19 +709,19 @@
       },
       "severity_ok": false,
       "req_type_ok": true,
-      "targets_f1": 0.75,
-      "latency_s": 3.14
+      "targets_f1": 1.0,
+      "latency_s": 6.96
     },
     {
       "id": "tc-029",
       "predicted": {
-        "clause_id": "TLS-1",
+        "clause_id": "TLS-1.2",
         "clause_text": "All data in transit must be protected using TLS 1.2 or higher.",
         "requirement_type": "encryption",
         "check_targets": [
-          "aws_elb",
-          "aws_alb",
-          "aws_api_gateway"
+          "aws_lb",
+          "aws_api_gateway_rest_api",
+          "aws_alb_listener"
         ],
         "severity": "critical"
       },
@@ -740,18 +738,18 @@
       "severity_ok": false,
       "req_type_ok": true,
       "targets_f1": 0.333,
-      "latency_s": 7.04
+      "latency_s": 9.47
     },
     {
       "id": "tc-030",
       "predicted": {
-        "clause_id": "SECRETS-1",
+        "clause_id": "Lambda-Secrets-1",
         "clause_text": "Lambda functions must not have environment variables containing unencrypted secrets or API keys.",
         "requirement_type": "secrets_management",
         "check_targets": [
           "aws_lambda_function"
         ],
-        "severity": "critical"
+        "severity": "high"
       },
       "expected": {
         "clause_id": "SEC-001",
@@ -761,20 +759,19 @@
         ],
         "severity": "high"
       },
-      "severity_ok": false,
+      "severity_ok": true,
       "req_type_ok": true,
       "targets_f1": 1.0,
-      "latency_s": 4.81
+      "latency_s": 8.03
     },
     {
       "id": "tc-031",
       "predicted": {
-        "clause_id": "VPC-1",
+        "clause_id": "CIS-EC2-1",
         "clause_text": "EC2 instances must not use the default VPC.",
         "requirement_type": "networking",
         "check_targets": [
-          "aws_instance",
-          "aws_vpc"
+          "aws_instance"
         ],
         "severity": "high"
       },
@@ -789,14 +786,14 @@
       },
       "severity_ok": false,
       "req_type_ok": true,
-      "targets_f1": 1.0,
-      "latency_s": 4.68
+      "targets_f1": 0.667,
+      "latency_s": 8.6
     },
     {
       "id": "tc-032",
       "predicted": {
-        "clause_id": "IAM-EC2-1",
-        "clause_text": "Ensure that IAM roles used by EC2 instances follow the principle of least privilege. No instance profile should grant administrative access.",
+        "clause_id": "IAM-LeastPrivilege-EC2",
+        "clause_text": "Ensure that IAM roles used by EC2 instances follow the principle of least privilege.",
         "requirement_type": "access_control",
         "check_targets": [
           "aws_iam_role",
@@ -816,12 +813,12 @@
       "severity_ok": true,
       "req_type_ok": true,
       "targets_f1": 1.0,
-      "latency_s": 1.2
+      "latency_s": 9.79
     },
     {
       "id": "tc-033",
       "predicted": {
-        "clause_id": "S3-VERSIONING-1",
+        "clause_id": "S3-Versioning-1",
         "clause_text": "All S3 buckets storing sensitive data must have versioning enabled to protect against accidental deletion and allow recovery of previous versions.",
         "requirement_type": "backup",
         "check_targets": [
@@ -841,12 +838,12 @@
       "severity_ok": false,
       "req_type_ok": true,
       "targets_f1": 0.667,
-      "latency_s": 2.95
+      "latency_s": 6.79
     },
     {
       "id": "tc-034",
       "predicted": {
-        "clause_id": "RDS-BK-1",
+        "clause_id": "RDS-Backup-1",
         "clause_text": "Ensure RDS automated backups are enabled with a retention period of at least 7 days.",
         "requirement_type": "backup",
         "check_targets": [
@@ -866,7 +863,7 @@
       "severity_ok": true,
       "req_type_ok": true,
       "targets_f1": 0.667,
-      "latency_s": 5.17
+      "latency_s": 5.71
     },
     {
       "id": "tc-035",
@@ -890,14 +887,14 @@
       "severity_ok": false,
       "req_type_ok": true,
       "targets_f1": 1.0,
-      "latency_s": 2.66
+      "latency_s": 5.1
     },
     {
       "id": "tc-036",
       "predicted": {
-        "clause_id": "ECR-1",
+        "clause_id": "ECR-ImageScanning",
         "clause_text": "All ECR repositories must have image scanning enabled and must scan images on push to detect vulnerabilities.",
-        "requirement_type": "vulnerability_management",
+        "requirement_type": "monitoring",
         "check_targets": [
           "aws_ecr_repository"
         ],
@@ -914,18 +911,18 @@
       "severity_ok": false,
       "req_type_ok": false,
       "targets_f1": 1.0,
-      "latency_s": 3.76
+      "latency_s": 4.63
     },
     {
       "id": "tc-037",
       "predicted": {
-        "clause_id": "SNS-1",
+        "clause_id": "SNS-ENCRYPTION-1",
         "clause_text": "SNS topics that contain sensitive data must be encrypted using AWS KMS.",
         "requirement_type": "encryption",
         "check_targets": [
           "aws_sns_topic"
         ],
-        "severity": "critical"
+        "severity": "high"
       },
       "expected": {
         "clause_id": "ENC-003",
@@ -938,12 +935,12 @@
       "severity_ok": false,
       "req_type_ok": true,
       "targets_f1": 1.0,
-      "latency_s": 3.73
+      "latency_s": 11.1
     },
     {
       "id": "tc-038",
       "predicted": {
-        "clause_id": "SQS-1",
+        "clause_id": "SQS-Encryption-1",
         "clause_text": "SQS queues must be encrypted at rest using a KMS customer-managed key (CMK). Default SQS encryption using SSE-SQS is not sufficient for queues processing sensitive data.",
         "requirement_type": "encryption",
         "check_targets": [
@@ -962,12 +959,12 @@
       "severity_ok": false,
       "req_type_ok": true,
       "targets_f1": 1.0,
-      "latency_s": 4.25
+      "latency_s": 14.45
     },
     {
       "id": "tc-039",
       "predicted": {
-        "clause_id": "VPC-Flow-Logs-1",
+        "clause_id": "VPC-FLOW-1",
         "clause_text": "VPC Flow Logs must be enabled for all VPCs to capture information about IP traffic going to and from network interfaces in your VPC.",
         "requirement_type": "logging",
         "check_targets": [
@@ -987,12 +984,12 @@
       "severity_ok": false,
       "req_type_ok": true,
       "targets_f1": 0.667,
-      "latency_s": 3.6
+      "latency_s": 9.24
     },
     {
       "id": "tc-040",
       "predicted": {
-        "clause_id": "CLOUD-1.1",
+        "clause_id": "CW-API-Alarm",
         "clause_text": "CloudWatch alarms must be configured to alert on unauthorized API calls, including root account usage, and failed console login attempts.",
         "requirement_type": "monitoring",
         "check_targets": [
@@ -1012,12 +1009,12 @@
       "severity_ok": false,
       "req_type_ok": true,
       "targets_f1": 0.667,
-      "latency_s": 2.51
+      "latency_s": 4.3
     },
     {
       "id": "tc-041",
       "predicted": {
-        "clause_id": "GD-1",
+        "clause_id": "GuardDuty-1",
         "clause_text": "Ensure GuardDuty is enabled in all AWS regions.",
         "requirement_type": "monitoring",
         "check_targets": [
@@ -1036,19 +1033,16 @@
       "severity_ok": true,
       "req_type_ok": true,
       "targets_f1": 1.0,
-      "latency_s": 2.85
+      "latency_s": 3.91
     },
     {
       "id": "tc-042",
       "predicted": {
         "clause_id": "SECRETS-1",
-        "clause_text": "AWS Secrets Manager must be used for storing database credentials, API keys, and other secrets. Hard-coded credentials in Terraform or application code are prohibited.",
+        "clause_text": "AWS Secrets Manager must be used for storing database credentials, API keys, and other secrets.",
         "requirement_type": "secrets_management",
         "check_targets": [
-          "aws_secretsmanager_secret",
-          "aws_secretsmanager_secret_version",
-          "aws_iam_user",
-          "aws_iam_role"
+          "aws_secretsmanager_secret"
         ],
         "severity": "critical"
       },
@@ -1063,19 +1057,19 @@
       },
       "severity_ok": true,
       "req_type_ok": true,
-      "targets_f1": 0.333,
-      "latency_s": 3.71
+      "targets_f1": 0.667,
+      "latency_s": 7.72
     },
     {
       "id": "tc-043",
       "predicted": {
-        "clause_id": "KMS-1",
-        "clause_text": "Ensure that AWS KMS customer master keys (CMKs) are rotated automatically. Key rotation limits the amount of data encrypted with any one key version.",
+        "clause_id": "KMS-CMK-1",
+        "clause_text": "Ensure that AWS KMS customer master keys (CMKs) are rotated automatically.",
         "requirement_type": "encryption",
         "check_targets": [
           "aws_kms_key"
         ],
-        "severity": "medium"
+        "severity": "high"
       },
       "expected": {
         "clause_id": "ENC-005",
@@ -1085,20 +1079,20 @@
         ],
         "severity": "medium"
       },
-      "severity_ok": true,
+      "severity_ok": false,
       "req_type_ok": true,
       "targets_f1": 1.0,
-      "latency_s": 3.44
+      "latency_s": 3.96
     },
     {
       "id": "tc-044",
       "predicted": {
-        "clause_id": "ALB-1",
-        "clause_text": "All application load balancers must redirect HTTP traffic to HTTPS.",
+        "clause_id": "ALB-HTTPS-REDIRECT",
+        "clause_text": "All application load balancers must redirect HTTP traffic to HTTPS. Port 80 listeners must only contain redirect rules pointing to port 443.",
         "requirement_type": "networking",
         "check_targets": [
           "aws_lb",
-          "aws_alb"
+          "aws_lb_listener"
         ],
         "severity": "high"
       },
@@ -1113,19 +1107,19 @@
       },
       "severity_ok": true,
       "req_type_ok": false,
-      "targets_f1": 0.0,
-      "latency_s": 4.24
+      "targets_f1": 0.5,
+      "latency_s": 4.25
     },
     {
       "id": "tc-045",
       "predicted": {
-        "clause_id": "LOG-1",
+        "clause_id": "CW-LOG-1",
         "clause_text": "CloudWatch log groups must have a retention policy configured.",
         "requirement_type": "logging",
         "check_targets": [
           "aws_cloudwatch_log_group"
         ],
-        "severity": "medium"
+        "severity": "high"
       },
       "expected": {
         "clause_id": "LOG-003",
@@ -1138,14 +1132,14 @@
       "severity_ok": false,
       "req_type_ok": true,
       "targets_f1": 1.0,
-      "latency_s": 2.87
+      "latency_s": 3.83
     },
     {
       "id": "tc-046",
       "predicted": {
-        "clause_id": "IMDS-1",
-        "clause_text": "EC2 instances must use IMDSv2 (Instance Metadata Service version 2) exclusively.",
-        "requirement_type": "networking",
+        "clause_id": "EC2-IMDSv2",
+        "clause_text": "EC2 instances must use IMDSv2 (Instance Metadata Service version 2) exclusively. IMDSv1 is deprecated and vulnerable to SSRF attacks that can expose instance credentials.",
+        "requirement_type": "access_control",
         "check_targets": [
           "aws_instance"
         ],
@@ -1161,14 +1155,14 @@
         "severity": "high"
       },
       "severity_ok": true,
-      "req_type_ok": false,
+      "req_type_ok": true,
       "targets_f1": 0.667,
-      "latency_s": 2.72
+      "latency_s": 4.53
     },
     {
       "id": "tc-047",
       "predicted": {
-        "clause_id": "DDB-1.1",
+        "clause_id": "DynamoDB-Encryption-1",
         "clause_text": "DynamoDB tables must have encryption at rest enabled using AWS-managed or customer-managed KMS keys.",
         "requirement_type": "encryption",
         "check_targets": [
@@ -1187,12 +1181,12 @@
       "severity_ok": false,
       "req_type_ok": true,
       "targets_f1": 1.0,
-      "latency_s": 2.34
+      "latency_s": 3.78
     },
     {
       "id": "tc-048",
       "predicted": {
-        "clause_id": "ES-1",
+        "clause_id": "ES-Encryption-1",
         "clause_text": "Ensure that ElasticSearch/OpenSearch domains are encrypted at rest and have node-to-node encryption enabled.",
         "requirement_type": "encryption",
         "check_targets": [
@@ -1213,12 +1207,12 @@
       "severity_ok": true,
       "req_type_ok": true,
       "targets_f1": 1.0,
-      "latency_s": 2.57
+      "latency_s": 3.31
     },
     {
       "id": "tc-049",
       "predicted": {
-        "clause_id": "S3-1",
+        "clause_id": "S3-Encryption-1",
         "clause_text": "S3 server-side encryption must be enabled for all buckets.",
         "requirement_type": "encryption",
         "check_targets": [
@@ -1238,17 +1232,16 @@
       "severity_ok": false,
       "req_type_ok": true,
       "targets_f1": 0.667,
-      "latency_s": 4.08
+      "latency_s": 9.04
     },
     {
       "id": "tc-050",
       "predicted": {
-        "clause_id": "IAM-1.1",
+        "clause_id": "IAM-1",
         "clause_text": "IAM users must not have direct policy attachments. All permissions must be granted via IAM groups or roles.",
         "requirement_type": "access_control",
         "check_targets": [
-          "aws_iam_user",
-          "aws_iam_policy_attachment"
+          "aws_iam_user_policy_attachment"
         ],
         "severity": "high"
       },
@@ -1263,17 +1256,17 @@
       },
       "severity_ok": false,
       "req_type_ok": true,
-      "targets_f1": 0.5,
-      "latency_s": 2.51
+      "targets_f1": 0.0,
+      "latency_s": 4.56
     },
     {
       "id": "tc-051",
       "predicted": {
-        "clause_id": "MFA-1",
+        "clause_id": "CIS-1.4",
         "clause_text": "Multi-Factor Authentication (MFA) must be enabled on the AWS root account.",
         "requirement_type": "access_control",
         "check_targets": [
-          "aws_iam_account"
+          "aws_iam_account_password_policy"
         ],
         "severity": "critical"
       },
@@ -1288,13 +1281,13 @@
       "severity_ok": true,
       "req_type_ok": true,
       "targets_f1": 0.0,
-      "latency_s": 2.72
+      "latency_s": 3.4
     },
     {
       "id": "tc-052",
       "predicted": {
-        "clause_id": "GLACIER-1",
-        "clause_text": "Ensure that Amazon Glacier vaults have access policies that prevent public access. Data stored in Glacier should be accessible only by authorized principals.",
+        "clause_id": "Glacier-PublicAccess-1",
+        "clause_text": "Ensure that Amazon Glacier vaults have access policies that prevent public access.",
         "requirement_type": "access_control",
         "check_targets": [
           "aws_glacier_vault"
@@ -1312,12 +1305,12 @@
       "severity_ok": true,
       "req_type_ok": true,
       "targets_f1": 1.0,
-      "latency_s": 3.28
+      "latency_s": 8.74
     },
     {
       "id": "tc-053",
       "predicted": {
-        "clause_id": "IAM-1.1",
+        "clause_id": "Lambda-Invoke-Restrict",
         "clause_text": "Lambda functions must not be granted permissions that allow invocation from any principal ('*'). Function resource policies must restrict callers to specific services or accounts.",
         "requirement_type": "access_control",
         "check_targets": [
@@ -1338,20 +1331,19 @@
       "severity_ok": true,
       "req_type_ok": true,
       "targets_f1": 1.0,
-      "latency_s": 2.98
+      "latency_s": 4.05
     },
     {
       "id": "tc-054",
       "predicted": {
-        "clause_id": "ELB-1",
+        "clause_id": "ELB-Logging-1",
         "clause_text": "Ensure Elastic Load Balancers have access logs enabled.",
         "requirement_type": "logging",
         "check_targets": [
-          "aws_elb",
-          "aws_alb",
-          "aws_nl"
+          "aws_lb",
+          "aws_elb"
         ],
-        "severity": "medium"
+        "severity": "high"
       },
       "expected": {
         "clause_id": "LOG-004",
@@ -1363,15 +1355,15 @@
         ],
         "severity": "medium"
       },
-      "severity_ok": true,
+      "severity_ok": false,
       "req_type_ok": true,
-      "targets_f1": 0.667,
-      "latency_s": 2.7
+      "targets_f1": 0.8,
+      "latency_s": 5.29
     },
     {
       "id": "tc-055",
       "predicted": {
-        "clause_id": "ECS-1.1",
+        "clause_id": "ECS-PRIV-1",
         "clause_text": "Ensure that ECS task definitions do not have elevated privileges. Containers must not run with privileged mode enabled or with the root user unless strictly necessary.",
         "requirement_type": "access_control",
         "check_targets": [
@@ -1390,7 +1382,7 @@
       "severity_ok": true,
       "req_type_ok": true,
       "targets_f1": 1.0,
-      "latency_s": 2.72
+      "latency_s": 4.87
     }
   ]
 }
